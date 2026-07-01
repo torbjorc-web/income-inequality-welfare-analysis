@@ -1,0 +1,4 @@
+country,latest_gini,latest_year,change_from_first_observation,headline_context_indicator,context_value,context_unit
+Norway,0.256,2024,0.026999999999999996,Avg public-services total (Barnehage+Utdanning+Pleie/Helse),10.920833333333333,share points
+USA,0.488,2024,0.0030000000000000027,"Lowest quintile income share (money income, 2024)",3.1,%
+Philippines,0.3909,2023,-0.07319999999999999,National Gini change since 2009,-0.07319999999999999,Gini points

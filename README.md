@@ -13,6 +13,8 @@ This project compares income inequality, poverty, and welfare systems across Nor
 
 It uses official statistics and supporting research to show how public services, redistribution, and welfare policy shape the gap between rich and poor.
 
+It examines how public services and equivalence scales change the interpretation of inequality and poverty, and uses SQL, pandas, and visualization tools to turn raw CSV data into portfolio-ready analysis.
+
 ## Why this project
 
 I wanted to build a portfolio project that shows real data analysis skills, not just charts.
@@ -52,3 +54,9 @@ The project combines data collection, cleaning, comparison, visualization, and i
 ## Current Status
 
 Early development stage.
+
+## Findings (current snapshot)
+
+- **Norway:** lower inequality level overall, but a gradual increase over time.
+- **USA:** higher inequality, with a more market-driven distribution pattern.
+- **Philippines:** a stronger poverty challenge and a different welfare context than Norway/USA.
