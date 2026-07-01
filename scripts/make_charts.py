@@ -8,11 +8,13 @@ import pandas as pd
 BASE_DIR = Path(__file__).resolve().parents[1]
 DB_PATH = BASE_DIR / "database" / "database.db"
 OUTPUT_DIR = BASE_DIR / "outputs"
+FIGURES_DIR = OUTPUT_DIR / "figures"
+TABLES_DIR = OUTPUT_DIR / "tables"
 
-COMPARISON_CSV = OUTPUT_DIR / "country_headline_comparison.csv"
-COMPARISON_MD = OUTPUT_DIR / "country_headline_comparison.md"
-NORWAY_TREND_PNG = OUTPUT_DIR / "norway_inequality_trend.png"
-WELFARE_CONTEXT_PNG = OUTPUT_DIR / "welfare_context_comparison.png"
+COMPARISON_CSV = TABLES_DIR / "country_headline_comparison.csv"
+COMPARISON_MD = TABLES_DIR / "country_headline_comparison.md"
+NORWAY_TREND_PNG = FIGURES_DIR / "norway_inequality_trend.png"
+WELFARE_CONTEXT_PNG = FIGURES_DIR / "welfare_context_comparison.png"
 
 
 def parse_number(value):
@@ -190,7 +192,7 @@ def build_country_table(conn):
 
 
 def save_comparison_table(df):
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    TABLES_DIR.mkdir(parents=True, exist_ok=True)
     df.to_csv(COMPARISON_CSV, index=False, encoding="utf-8")
     headers = list(df.columns)
     lines = [
@@ -262,6 +264,8 @@ def main():
         raise FileNotFoundError(f"Database not found: {DB_PATH}")
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    FIGURES_DIR.mkdir(parents=True, exist_ok=True)
+    TABLES_DIR.mkdir(parents=True, exist_ok=True)
     with sqlite3.connect(DB_PATH) as conn:
         table_df = build_country_table(conn)
         save_comparison_table(table_df)

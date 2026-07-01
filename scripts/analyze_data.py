@@ -6,7 +6,8 @@ from statistics import mean
 BASE_DIR = Path(__file__).resolve().parents[1]
 DB_PATH = BASE_DIR / "database" / "database.db"
 OUTPUT_DIR = BASE_DIR / "outputs"
-SUMMARY_PATH = OUTPUT_DIR / "analysis_summary.txt"
+TABLES_DIR = OUTPUT_DIR / "tables"
+SUMMARY_PATH = TABLES_DIR / "analysis_summary.txt"
 
 
 def parse_number(value):
@@ -341,6 +342,7 @@ def main():
         raise FileNotFoundError(f"Database not found: {DB_PATH}")
 
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    TABLES_DIR.mkdir(parents=True, exist_ok=True)
 
     with sqlite3.connect(DB_PATH) as conn:
         tables = get_tables(conn)

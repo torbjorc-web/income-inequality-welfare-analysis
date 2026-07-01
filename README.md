@@ -15,6 +15,8 @@ It uses official statistics and supporting research to show how public services,
 
 It examines how public services and equivalence scales change the interpretation of inequality and poverty, and uses SQL, pandas, and visualization tools to turn raw CSV data into portfolio-ready analysis.
 
+For a short explanation of **SNA vs EU-skala** and why equivalence-scale choice matters, see `docs/methodology.md`.
+
 ## Why this project
 
 I wanted to build a portfolio project that shows real data analysis skills, not just charts.
