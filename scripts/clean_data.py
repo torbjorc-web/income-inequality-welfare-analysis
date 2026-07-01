@@ -11,6 +11,7 @@ DB_PATH = BASE_DIR / "database" / "database.db"
 
 USA_RAW_PATH = RAW_DIR / "USA Income Distribution Measures.csv"
 PH_RAW_PATH = RAW_DIR / "Gini Philippines version 2.csv"
+NORWAY_RAW_PATH = RAW_DIR / "Norge Inntektsfordelingen belyst ved ulike ulikhetsmål. Inntekt etter skatt per forbruksenhet (EU-skala).csv"
 
 
 def parse_number(value):
@@ -153,11 +154,51 @@ def clean_philippines_dataset():
     return cleaned_df
 
 
+def clean_norway_p90_p10_dataset():
+    raw_df = read_csv_flexible(NORWAY_RAW_PATH, sep=";")
+    raw_df = raw_df.fillna("")
+
+    cleaned_rows = []
+    for _, row in raw_df.iterrows():
+        year = parse_number(row[0])
+        if year is None or year < 1900 or year > 2100:
+            continue
+
+        p90_p10_all = parse_number(row[3]) if len(row) > 3 else None
+        p90_p10_ex_students = parse_number(row[7]) if len(row) > 7 else None
+
+        if p90_p10_all is None and p90_p10_ex_students is None:
+            continue
+
+        cleaned_rows.append(
+            {
+                "year": int(year),
+                "p90_p10_all_population": p90_p10_all,
+                "p90_p10_excl_student_households": p90_p10_ex_students,
+            }
+        )
+
+    cleaned_df = pd.DataFrame(cleaned_rows)
+    if cleaned_df.empty:
+        cleaned_df = pd.DataFrame(
+            columns=[
+                "year",
+                "p90_p10_all_population",
+                "p90_p10_excl_student_households",
+            ]
+        )
+    else:
+        cleaned_df = cleaned_df.sort_values("year").reset_index(drop=True)
+    return cleaned_df
+
+
 def main():
     if not USA_RAW_PATH.exists():
         raise FileNotFoundError(f"USA source file not found: {USA_RAW_PATH}")
     if not PH_RAW_PATH.exists():
         raise FileNotFoundError(f"Philippines source file not found: {PH_RAW_PATH}")
+    if not NORWAY_RAW_PATH.exists():
+        raise FileNotFoundError(f"Norway source file not found: {NORWAY_RAW_PATH}")
     if not DB_PATH.exists():
         raise FileNotFoundError(f"Database not found: {DB_PATH}")
 
@@ -165,19 +206,24 @@ def main():
 
     usa_df = clean_usa_dataset()
     ph_df = clean_philippines_dataset()
+    norway_df = clean_norway_p90_p10_dataset()
 
     usa_csv_path = PROCESSED_DIR / "usa_income_distribution_clean.csv"
     ph_csv_path = PROCESSED_DIR / "philippines_gini_clean.csv"
+    norway_csv_path = PROCESSED_DIR / "norway_p90_p10_clean.csv"
     usa_df.to_csv(usa_csv_path, index=False, encoding="utf-8")
     ph_df.to_csv(ph_csv_path, index=False, encoding="utf-8")
+    norway_df.to_csv(norway_csv_path, index=False, encoding="utf-8")
 
     with sqlite3.connect(DB_PATH) as conn:
         usa_df.to_sql("usa_clean", conn, if_exists="replace", index=False)
         ph_df.to_sql("philippines_clean", conn, if_exists="replace", index=False)
+        norway_df.to_sql("norway_p90_p10_clean", conn, if_exists="replace", index=False)
 
     print(f"Clean USA rows: {len(usa_df)} -> {usa_csv_path}")
     print(f"Clean Philippines rows: {len(ph_df)} -> {ph_csv_path}")
-    print("Wrote tables to database.db: usa_clean, philippines_clean")
+    print(f"Clean Norway P90/P10 rows: {len(norway_df)} -> {norway_csv_path}")
+    print("Wrote tables to database.db: usa_clean, philippines_clean, norway_p90_p10_clean")
 
 
 if __name__ == "__main__":

@@ -15,6 +15,7 @@ COMPARISON_CSV = TABLES_DIR / "country_headline_comparison.csv"
 COMPARISON_MD = TABLES_DIR / "country_headline_comparison.md"
 NORWAY_TREND_PNG = FIGURES_DIR / "norway_inequality_trend.png"
 WELFARE_CONTEXT_PNG = FIGURES_DIR / "welfare_context_comparison.png"
+USA_NORWAY_90_10_PNG = FIGURES_DIR / "usa_norway_90_10_comparison.png"
 
 
 def parse_number(value):
@@ -154,6 +155,47 @@ def get_usa_lowest_quintile_share(conn):
     return row[0] if row and row[0] is not None else None
 
 
+def get_norway_p90_p10_series(conn):
+    if not table_exists(conn, "norway_p90_p10_clean"):
+        raise ValueError("Table norway_p90_p10_clean not found. Run scripts\\clean_data.py first.")
+
+    rows = conn.execute(
+        """
+        SELECT year, p90_p10_all_population
+        FROM "norway_p90_p10_clean"
+        WHERE p90_p10_all_population IS NOT NULL
+        ORDER BY year
+        """
+    ).fetchall()
+    if not rows:
+        raise ValueError("No Norway P90/P10 values found in norway_p90_p10_clean.")
+    return rows
+
+
+def get_usa_p90_p10_points(conn):
+    if not table_exists(conn, "usa_clean"):
+        raise ValueError("Table usa_clean not found. Run scripts\\clean_data.py first.")
+
+    row = conn.execute(
+        """
+        SELECT year_2023_estimate, year_2024_estimate
+        FROM "usa_clean"
+        WHERE income_type = 'MONEY INCOME'
+          AND measure = '90th/10th percentile income ratio'
+        LIMIT 1
+        """
+    ).fetchone()
+    if not row or (row[0] is None and row[1] is None):
+        raise ValueError("USA 90/10 values not found in usa_clean.")
+
+    points = []
+    if row[0] is not None:
+        points.append((2023, row[0]))
+    if row[1] is not None:
+        points.append((2024, row[1]))
+    return points
+
+
 def build_country_table(conn):
     norway_series = get_norway_gini_series(conn)
     usa_2023, usa_2024 = get_usa_gini(conn)
@@ -259,6 +301,28 @@ def plot_welfare_context_comparison(conn):
     plt.close()
 
 
+def plot_usa_norway_90_10_comparison(conn):
+    norway_rows = get_norway_p90_p10_series(conn)
+    usa_rows = get_usa_p90_p10_points(conn)
+
+    norway_years = [row[0] for row in norway_rows]
+    norway_values = [row[1] for row in norway_rows]
+    usa_years = [row[0] for row in usa_rows]
+    usa_values = [row[1] for row in usa_rows]
+
+    plt.figure(figsize=(10, 5))
+    plt.plot(norway_years, norway_values, marker="o", linewidth=2, label="Norway P90/P10")
+    plt.plot(usa_years, usa_values, marker="o", linewidth=2, label="USA 90th/10th ratio")
+    plt.title("P90/P10 comparison: Norway vs USA")
+    plt.xlabel("Year")
+    plt.ylabel("P90/P10 income ratio")
+    plt.grid(True, alpha=0.3)
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(USA_NORWAY_90_10_PNG, dpi=150)
+    plt.close()
+
+
 def main():
     if not DB_PATH.exists():
         raise FileNotFoundError(f"Database not found: {DB_PATH}")
@@ -271,11 +335,13 @@ def main():
         save_comparison_table(table_df)
         plot_norway_inequality_trend(conn)
         plot_welfare_context_comparison(conn)
+        plot_usa_norway_90_10_comparison(conn)
 
     print(f"Created comparison table: {COMPARISON_CSV}")
     print(f"Created markdown table:  {COMPARISON_MD}")
     print(f"Created chart:           {NORWAY_TREND_PNG}")
     print(f"Created chart:           {WELFARE_CONTEXT_PNG}")
+    print(f"Created chart:           {USA_NORWAY_90_10_PNG}")
 
 
 if __name__ == "__main__":
