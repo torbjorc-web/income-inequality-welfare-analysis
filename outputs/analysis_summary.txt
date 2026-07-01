@@ -1,0 +1,116 @@
+Income inequality analysis summary
+Database: C:\Prosject\Dataanalyse\income-inequality-welfare-analysis\database\database.db
+Tables found: 10
+
+## Table quality profile
+- norway: 28 rows, 9 columns
+  - Unnamed: 0: 27/28 non-empty (96.4%)
+  - Hele befolkningen: 25/28 non-empty (89.3%)
+  - Unnamed: 2: 25/28 non-empty (89.3%)
+  - Unnamed: 3: 25/28 non-empty (89.3%)
+  - Unnamed: 4: 25/28 non-empty (89.3%)
+  - ...
+- norway_public_services: 24 rows, 5 columns
+  - Land: 24/24 non-empty (100.0%)
+  - Barnehage: 24/24 non-empty (100.0%)
+  - Utdanning: 24/24 non-empty (100.0%)
+  - Pleie og omsorg: 24/24 non-empty (100.0%)
+  - Helse: 24/24 non-empty (100.0%)
+- norway_public_services_2: 27 rows, 10 columns
+  - Dekomponering av Gini-koeffisienten i ulikhetsandel, inntektsandel og konsentrasjons-koeffisient for tre inntektskomponenter (bruttoinntekt, skatt og offentlige tjenester) i 24 europeiske land, 2012: 26/27 non-empty (96.3%)
+  - Unnamed: 1: 26/27 non-empty (96.3%)
+  - Unnamed: 2: 25/27 non-empty (92.6%)
+  - Unnamed: 3: 25/27 non-empty (92.6%)
+  - Unnamed: 4: 26/27 non-empty (96.3%)
+  - ...
+- norway_public_services_3: 27 rows, 4 columns
+  - Dekomponering av Gini-koeffisienten etter inntektskomponenter. Norge, 2018: 23/27 non-empty (85.2%)
+  - Unnamed: 1: 17/27 non-empty (63.0%)
+  - Unnamed: 2: 17/27 non-empty (63.0%)
+  - Unnamed: 3: 17/27 non-empty (63.0%)
+- norway_public_services_4: 6 rows, 5 columns
+  - Inntektsandel til topp 1-prosenten, Gini-koeffisient for de resterende 99 prosent og Gini-koeffisient for hele fordelingen i 2018: 4/6 non-empty (66.7%)
+  - Unnamed: 1: 5/6 non-empty (83.3%)
+  - Unnamed: 2: 4/6 non-empty (66.7%)
+  - Unnamed: 3: 5/6 non-empty (83.3%)
+  - Unnamed: 4: 4/6 non-empty (66.7%)
+- norway_public_services_5: 8 rows, 3 columns
+  - Alder: 8/8 non-empty (100.0%)
+  - SNA-skala: 8/8 non-empty (100.0%)
+  - EU-skala: 8/8 non-empty (100.0%)
+- philippines: 954 rows, 29 columns
+  - TABLE 2.8a Gini Coefficient Ratio by Region: 2009: 21/954 non-empty (2.2%)
+  - 2012: 20/954 non-empty (2.1%)
+  - 2015: 20/954 non-empty (2.1%)
+  - 2018: 20/954 non-empty (2.1%)
+  - 2021: 20/954 non-empty (2.1%)
+  - ...
+- philippines_clean: 19 rows, 7 columns
+  - region: 19/19 non-empty (100.0%)
+  - gini_2009: 18/19 non-empty (94.7%)
+  - gini_2012: 18/19 non-empty (94.7%)
+  - gini_2015: 18/19 non-empty (94.7%)
+  - gini_2018: 18/19 non-empty (94.7%)
+  - ...
+- usa: 44 rows, 7 columns
+  - Table with row headers in column A and column headers in rows 4 through 5: 43/44 non-empty (97.7%)
+  - Unnamed: 1: 28/44 non-empty (63.6%)
+  - Unnamed: 2: 27/44 non-empty (61.4%)
+  - Unnamed: 3: 28/44 non-empty (63.6%)
+  - Unnamed: 4: 27/44 non-empty (61.4%)
+  - ...
+- usa_clean: 26 rows, 9 columns
+  - income_type: 26/26 non-empty (100.0%)
+  - group_name: 26/26 non-empty (100.0%)
+  - measure: 26/26 non-empty (100.0%)
+  - year_2023_estimate: 26/26 non-empty (100.0%)
+  - year_2023_moe: 26/26 non-empty (100.0%)
+  - ...
+
+## Norway inequality trend
+- Parsed points: 24
+- First year: 2001 (Gini 0.229)
+- Last year: 2024 (Gini 0.256)
+- Change over period: +0.027
+
+## Norway public services
+- Parsed rows: 24
+- Highest combined spending share: Sverige (15.50)
+- Lowest combined spending share: Irland (7.40)
+- Average by category:
+  - Barnehage: 0.72
+  - Utdanning: 3.17
+  - Pleie og omsorg: 1.46
+  - Helse: 5.58
+
+## SNA vs EU scale
+- Parsed rows: 8
+- Largest absolute gap: 14-18 år (SNA=0.92, EU=0.50)
+- SNA/EU ratio by age group:
+  - 0-2 år: 1.33
+  - 3-5 år: 1.77
+  - 6-13 år: 2.23
+  - 14-18 år: 1.84
+  - 19-54 år: 1.08
+  - 55-64 år: 1.22
+  - 65-74 år: 1.36
+  - 75 år og over: 1.76
+
+## USA cleaned trend
+- EQUIVALENCE-ADJUSTED INCOME | Gini index of income inequality: 0.465 -> 0.465 (+0.000)
+- EQUIVALENCE-ADJUSTED INCOME | Highest quintile: 50.400 -> 50.500 (+0.100)
+- MONEY INCOME | Gini index of income inequality: 0.485 -> 0.488 (+0.003)
+- MONEY INCOME | Highest quintile: 51.900 -> 52.200 (+0.300)
+
+## Philippines cleaned trend
+- National Gini: 0.4641 (2009) -> 0.3909 (2023) (-0.0732)
+- National series: 2009=0.4641, 2012=0.4605, 2015=0.4438, 2018=0.4267, 2021=0.4063, 2023=0.3909
+- Lowest regional Gini in 2023: BARMM (0.2538)
+- Highest regional Gini in 2023: XII-SOCCSKSARGEN (0.4338)
+
+## Norway vs USA vs Philippines comparison
+- Latest national Gini values used: Norway=0.2560 (2024), USA=0.4880 (2024), Philippines=0.3909 (2023)
+- Highest to lowest inequality (by Gini): USA (0.4880) > Philippines (0.3909) > Norway (0.2560)
+- Gap USA - Philippines: +0.0971
+- Gap USA - Norway: +0.2320
+- Gap Philippines - Norway: +0.1349
