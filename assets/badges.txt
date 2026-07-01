@@ -1,0 +1,19 @@
+Badge ideas for README:
+
+Status:
+https://img.shields.io/badge/status-in%20progress-orange?style=for-the-badge
+
+Data:
+https://img.shields.io/badge/data-official%20statistics-blue?style=for-the-badge
+
+Focus:
+https://img.shields.io/badge/focus-data%20analysis%20%26%20visualization-green?style=for-the-badge
+
+Countries:
+https://img.shields.io/badge/countries-Norway%20%7C%20USA%20%7C%20Philippines-purple?style=for-the-badge
+
+Tools:
+https://img.shields.io/badge/tools-Python%20%7C%20Pandas%20%7C%20SQL-lightgrey?style=for-the-badge
+
+License:
+https://img.shields.io/badge/license-MIT-yellow?style=for-the-badge

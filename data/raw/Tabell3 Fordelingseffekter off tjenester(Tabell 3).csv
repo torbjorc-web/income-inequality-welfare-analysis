@@ -1,0 +1,28 @@
+Dekomponering av Gini-koeffisienten etter inntektskomponenter. Norge, 2018;;;
+Komponent;Inntektsandel;Ulikhetsandel;Konsentrasjonskoeffisient
+Bruttoinntekt;1,031;1,418;0,267
+Skatt;-0,274;-0,508;0,360
+;;;
+Oppsplitting av offentlige tjenester;;;
+Totalt;0,243;0,090;0,072
+;;;
+Etter forvaltningsnivå;;;
+Stat;0,085;0,054;0,122
+Fylke;0,016;-0,012;-0,150
+Kommune;0,142;0,048;0,066
+;;;
+4 typer tjenester;;;
+Helsetjenester;0,096;0,054;0,109
+Pleie og omsorg;0,046;0,064;0,274
+Utdanning;0,068;-0,058;-0,165
+Barnehage;0,033;0,029;0,173
+;;;
+6 typer tjeneste;;;
+Primærhelsetjeneste;0,011;0,000;0,006
+Pleie- og omsorg;0,046;0,064;0,274
+Grunnskole;0,052;-0,046;-0,169
+Barnehage;0,033;0,029;0,173
+Spesialisthelsetjeneste;0,085;0,054;0,122
+Videregående utdanning;0,016;-0,012;-0,150
+Tabellen viser ulikhetsandel, inntektsandel og konsentrasjonskoeffisient for bruttoinntekt, skatt og verdien av offentlige velferdstjenester totalt. Videre splittes bidraget fra offentlige velferdstjenester opp på følgende komponenter: (i) Forvaltningsnivå som finansierer tjenestene (stat, fylkeskommune, kommune), (ii) en inndeling i fire tjenester (helsetjenester, pleie og omsorg, utdanning og barnehager) og (iii) en inndeling i seks tjenester (primærhelsetjeneste, pleie- og omsorg, grunnskole, barnehager, spesialisthelsetjeneste og videregående skoler).;;;
+Kilde: Eurostat/OECD.;;;
