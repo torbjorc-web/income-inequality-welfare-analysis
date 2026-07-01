@@ -23,6 +23,11 @@ I wanted to build a portfolio project that shows real data analysis skills, not 
 
 The project combines data collection, cleaning, comparison, visualization, and interpretation in a social and economic context.
 
+## Problem Statement
+
+Official inequality and poverty indicators are often presented separately and are hard to compare across countries with different welfare systems.
+This project builds a repeatable pipeline to compare Norway, the USA, and the Philippines using transparent data cleaning, database storage, and clear visual outputs.
+
 ## Data Sources
 
 - Statistics Norway (SSB)
@@ -35,6 +40,26 @@ The project combines data collection, cleaning, comparison, visualization, and i
 - How does income distribution differ between the three countries?
 - What do the data say about the gap between rich and poor?
 - How do welfare systems and public services affect poverty and inequality?
+
+## Method
+
+1. Load raw source files into SQLite with `setup_database.py`.
+2. Clean and normalize country-specific datasets with `scripts/clean_data.py`.
+3. Generate analysis summaries and comparison metrics with `scripts/analyze_data.py`.
+4. Generate publication-ready charts/tables with `scripts/make_charts.py`.
+
+## Run the project (end-to-end)
+
+```bash
+python setup_database.py
+python scripts/clean_data.py
+python scripts/analyze_data.py
+python scripts/make_charts.py
+```
+
+Outputs are written to:
+- `outputs/figures/` (charts)
+- `outputs/tables/` (summary tables and text outputs)
 
 ## Repository Structure
 
@@ -62,3 +87,10 @@ Early development stage.
 - **Norway:** lower inequality level overall, but a gradual increase over time.
 - **USA:** higher inequality, with a more market-driven distribution pattern.
 - **Philippines:** a stronger poverty challenge and a different welfare context than Norway/USA.
+
+## Chart and table interpretation (short)
+
+- `gini_usa_norway_philippines*.png`: compares headline national inequality levels (Gini) across the three countries.
+- `norway_gini_p90p10_s80s20.png`: shows that different inequality indicators in Norway move together over time.
+- `usa_norway_comparison.png`: highlights the gap between Norway and USA on latest available Gini and P90/P10 ratios.
+- `country_headline_comparison.md`: compact, portfolio-ready comparison table with key context indicators.

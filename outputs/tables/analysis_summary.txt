@@ -1,6 +1,6 @@
 Income inequality analysis summary
 Database: C:\Prosject\Dataanalyse\income-inequality-welfare-analysis\database\database.db
-Tables found: 10
+Tables found: 12
 
 ## Table quality profile
 - norway: 28 rows, 9 columns
@@ -10,6 +10,17 @@ Tables found: 10
   - Unnamed: 3: 25/28 non-empty (89.3%)
   - Unnamed: 4: 25/28 non-empty (89.3%)
   - ...
+- norway_inequality_indicators_clean: 24 rows, 7 columns
+  - year: 24/24 non-empty (100.0%)
+  - gini_all_population: 24/24 non-empty (100.0%)
+  - p90_p10_all_population: 24/24 non-empty (100.0%)
+  - s80_s20_all_population: 24/24 non-empty (100.0%)
+  - gini_excl_student_households: 24/24 non-empty (100.0%)
+  - ...
+- norway_p90_p10_clean: 24 rows, 3 columns
+  - year: 24/24 non-empty (100.0%)
+  - p90_p10_all_population: 24/24 non-empty (100.0%)
+  - p90_p10_excl_student_households: 24/24 non-empty (100.0%)
 - norway_public_services: 24 rows, 5 columns
   - Land: 24/24 non-empty (100.0%)
   - Barnehage: 24/24 non-empty (100.0%)
