@@ -18,6 +18,8 @@ WELFARE_CONTEXT_PNG = FIGURES_DIR / "welfare_context_comparison.png"
 USA_NORWAY_90_10_PNG = FIGURES_DIR / "usa_norway_90_10_comparison.png"
 NORWAY_3_INDICATORS_PNG = FIGURES_DIR / "norway_gini_p90p10_s80s20.png"
 USA_NORWAY_COMPARISON_PNG = FIGURES_DIR / "usa_norway_comparison.png"
+GINI_3COUNTRY_PNG = FIGURES_DIR / "gini_usa_norway_philippines.png"
+GINI_3COUNTRY_YMAX1_PNG = FIGURES_DIR / "gini_usa_norway_philippines_ymax1.png"
 
 
 def parse_number(value):
@@ -428,6 +430,63 @@ def plot_usa_norway_comparison(conn):
     plt.close()
 
 
+def plot_gini_three_country_comparison(conn):
+    norway_series = get_norway_gini_series(conn)
+    _, usa_2024 = get_usa_gini(conn)
+    _, ph_2023 = get_philippines_gini(conn)
+
+    countries = ["Norway", "USA", "Philippines"]
+    values = [norway_series[-1][1], usa_2024, ph_2023]
+
+    plt.figure(figsize=(8, 5))
+    bars = plt.bar(countries, values, color=["tab:blue", "tab:orange", "tab:green"])
+    plt.title("Gini comparison: USA, Norway, Philippines")
+    plt.ylabel("Gini coefficient")
+    plt.grid(axis="y", alpha=0.3)
+
+    for bar, value in zip(bars, values):
+        plt.text(
+            bar.get_x() + bar.get_width() / 2,
+            bar.get_height(),
+            f"{value:.3f}",
+            ha="center",
+            va="bottom",
+        )
+
+    plt.tight_layout()
+    plt.savefig(GINI_3COUNTRY_PNG, dpi=150)
+    plt.close()
+
+
+def plot_gini_three_country_comparison_ymax1(conn):
+    norway_series = get_norway_gini_series(conn)
+    _, usa_2024 = get_usa_gini(conn)
+    _, ph_2023 = get_philippines_gini(conn)
+
+    countries = ["Norway", "USA", "Philippines"]
+    values = [norway_series[-1][1], usa_2024, ph_2023]
+
+    plt.figure(figsize=(8, 5))
+    bars = plt.bar(countries, values, color=["tab:blue", "tab:orange", "tab:green"])
+    plt.title("Gini comparison: USA, Norway, Philippines (y-max = 1.0)")
+    plt.ylabel("Gini coefficient")
+    plt.ylim(0, 1.0)
+    plt.grid(axis="y", alpha=0.3)
+
+    for bar, value in zip(bars, values):
+        plt.text(
+            bar.get_x() + bar.get_width() / 2,
+            bar.get_height(),
+            f"{value:.3f}",
+            ha="center",
+            va="bottom",
+        )
+
+    plt.tight_layout()
+    plt.savefig(GINI_3COUNTRY_YMAX1_PNG, dpi=150)
+    plt.close()
+
+
 def main():
     if not DB_PATH.exists():
         raise FileNotFoundError(f"Database not found: {DB_PATH}")
@@ -443,6 +502,8 @@ def main():
         plot_usa_norway_90_10_comparison(conn)
         plot_norway_three_indicators(conn)
         plot_usa_norway_comparison(conn)
+        plot_gini_three_country_comparison(conn)
+        plot_gini_three_country_comparison_ymax1(conn)
 
     print(f"Created comparison table: {COMPARISON_CSV}")
     print(f"Created markdown table:  {COMPARISON_MD}")
@@ -451,6 +512,8 @@ def main():
     print(f"Created chart:           {USA_NORWAY_90_10_PNG}")
     print(f"Created chart:           {NORWAY_3_INDICATORS_PNG}")
     print(f"Created chart:           {USA_NORWAY_COMPARISON_PNG}")
+    print(f"Created chart:           {GINI_3COUNTRY_PNG}")
+    print(f"Created chart:           {GINI_3COUNTRY_YMAX1_PNG}")
 
 
 if __name__ == "__main__":
