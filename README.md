@@ -57,6 +57,12 @@ python scripts/analyze_data.py
 python scripts/make_charts.py
 ```
 
+Dashboard:
+
+```bash
+streamlit run dashboard.py
+```
+
 Outputs are written to:
 - `outputs/figures/` (charts)
 - `outputs/tables/` (summary tables and text outputs)
