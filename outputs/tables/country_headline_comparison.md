@@ -1,3 +1,5 @@
+# Country Headline Comparison
+
 | country | latest_gini | latest_year | change_from_first_observation | headline_context_indicator | context_value | context_unit |
 | --- | --- | --- | --- | --- | --- | --- |
 | Norway | 0.2560 | 2024 | 0.0270 | Avg public-services total (Barnehage+Utdanning+Pleie/Helse) | 10.9208 | share points |
