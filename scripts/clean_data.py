@@ -192,6 +192,64 @@ def clean_norway_p90_p10_dataset():
     return cleaned_df
 
 
+def clean_norway_inequality_indicators_dataset():
+    raw_df = read_csv_flexible(NORWAY_RAW_PATH, sep=";")
+    raw_df = raw_df.fillna("")
+
+    cleaned_rows = []
+    for _, row in raw_df.iterrows():
+        year = parse_number(row[0])
+        if year is None or year < 1900 or year > 2100:
+            continue
+
+        gini_all = parse_number(row[1]) if len(row) > 1 else None
+        p90_p10_all = parse_number(row[3]) if len(row) > 3 else None
+        s80_s20_all = parse_number(row[4]) if len(row) > 4 else None
+
+        gini_ex_students = parse_number(row[5]) if len(row) > 5 else None
+        p90_p10_ex_students = parse_number(row[7]) if len(row) > 7 else None
+        s80_s20_ex_students = parse_number(row[8]) if len(row) > 8 else None
+
+        if (
+            gini_all is None
+            and p90_p10_all is None
+            and s80_s20_all is None
+            and gini_ex_students is None
+            and p90_p10_ex_students is None
+            and s80_s20_ex_students is None
+        ):
+            continue
+
+        cleaned_rows.append(
+            {
+                "year": int(year),
+                "gini_all_population": gini_all,
+                "p90_p10_all_population": p90_p10_all,
+                "s80_s20_all_population": s80_s20_all,
+                "gini_excl_student_households": gini_ex_students,
+                "p90_p10_excl_student_households": p90_p10_ex_students,
+                "s80_s20_excl_student_households": s80_s20_ex_students,
+            }
+        )
+
+    cleaned_df = pd.DataFrame(cleaned_rows)
+    if cleaned_df.empty:
+        cleaned_df = pd.DataFrame(
+            columns=[
+                "year",
+                "gini_all_population",
+                "p90_p10_all_population",
+                "s80_s20_all_population",
+                "gini_excl_student_households",
+                "p90_p10_excl_student_households",
+                "s80_s20_excl_student_households",
+            ]
+        )
+    else:
+        cleaned_df = cleaned_df.sort_values("year").reset_index(drop=True)
+    return cleaned_df
+
+
 def main():
     if not USA_RAW_PATH.exists():
         raise FileNotFoundError(f"USA source file not found: {USA_RAW_PATH}")
@@ -207,23 +265,28 @@ def main():
     usa_df = clean_usa_dataset()
     ph_df = clean_philippines_dataset()
     norway_df = clean_norway_p90_p10_dataset()
+    norway_indicators_df = clean_norway_inequality_indicators_dataset()
 
     usa_csv_path = PROCESSED_DIR / "usa_income_distribution_clean.csv"
     ph_csv_path = PROCESSED_DIR / "philippines_gini_clean.csv"
     norway_csv_path = PROCESSED_DIR / "norway_p90_p10_clean.csv"
+    norway_indicators_csv_path = PROCESSED_DIR / "norway_inequality_indicators_clean.csv"
     usa_df.to_csv(usa_csv_path, index=False, encoding="utf-8")
     ph_df.to_csv(ph_csv_path, index=False, encoding="utf-8")
     norway_df.to_csv(norway_csv_path, index=False, encoding="utf-8")
+    norway_indicators_df.to_csv(norway_indicators_csv_path, index=False, encoding="utf-8")
 
     with sqlite3.connect(DB_PATH) as conn:
         usa_df.to_sql("usa_clean", conn, if_exists="replace", index=False)
         ph_df.to_sql("philippines_clean", conn, if_exists="replace", index=False)
         norway_df.to_sql("norway_p90_p10_clean", conn, if_exists="replace", index=False)
+        norway_indicators_df.to_sql("norway_inequality_indicators_clean", conn, if_exists="replace", index=False)
 
     print(f"Clean USA rows: {len(usa_df)} -> {usa_csv_path}")
     print(f"Clean Philippines rows: {len(ph_df)} -> {ph_csv_path}")
     print(f"Clean Norway P90/P10 rows: {len(norway_df)} -> {norway_csv_path}")
-    print("Wrote tables to database.db: usa_clean, philippines_clean, norway_p90_p10_clean")
+    print(f"Clean Norway indicators rows: {len(norway_indicators_df)} -> {norway_indicators_csv_path}")
+    print("Wrote tables to database.db: usa_clean, philippines_clean, norway_p90_p10_clean, norway_inequality_indicators_clean")
 
 
 if __name__ == "__main__":

@@ -16,6 +16,8 @@ COMPARISON_MD = TABLES_DIR / "country_headline_comparison.md"
 NORWAY_TREND_PNG = FIGURES_DIR / "norway_inequality_trend.png"
 WELFARE_CONTEXT_PNG = FIGURES_DIR / "welfare_context_comparison.png"
 USA_NORWAY_90_10_PNG = FIGURES_DIR / "usa_norway_90_10_comparison.png"
+NORWAY_3_INDICATORS_PNG = FIGURES_DIR / "norway_gini_p90p10_s80s20.png"
+USA_NORWAY_COMPARISON_PNG = FIGURES_DIR / "usa_norway_comparison.png"
 
 
 def parse_number(value):
@@ -172,6 +174,22 @@ def get_norway_p90_p10_series(conn):
     return rows
 
 
+def get_norway_indicator_series(conn):
+    if not table_exists(conn, "norway_inequality_indicators_clean"):
+        raise ValueError("Table norway_inequality_indicators_clean not found. Run scripts\\clean_data.py first.")
+
+    rows = conn.execute(
+        """
+        SELECT year, gini_all_population, p90_p10_all_population, s80_s20_all_population
+        FROM "norway_inequality_indicators_clean"
+        ORDER BY year
+        """
+    ).fetchall()
+    if not rows:
+        raise ValueError("No Norway indicator values found in norway_inequality_indicators_clean.")
+    return rows
+
+
 def get_usa_p90_p10_points(conn):
     if not table_exists(conn, "usa_clean"):
         raise ValueError("Table usa_clean not found. Run scripts\\clean_data.py first.")
@@ -194,6 +212,36 @@ def get_usa_p90_p10_points(conn):
     if row[1] is not None:
         points.append((2024, row[1]))
     return points
+
+
+def get_usa_latest_gini_and_90_10(conn):
+    if not table_exists(conn, "usa_clean"):
+        raise ValueError("Table usa_clean not found. Run scripts\\clean_data.py first.")
+
+    gini_row = conn.execute(
+        """
+        SELECT year_2024_estimate
+        FROM "usa_clean"
+        WHERE income_type = 'MONEY INCOME'
+          AND measure = 'Gini index of income inequality'
+        LIMIT 1
+        """
+    ).fetchone()
+    p90_row = conn.execute(
+        """
+        SELECT year_2024_estimate
+        FROM "usa_clean"
+        WHERE income_type = 'MONEY INCOME'
+          AND measure = '90th/10th percentile income ratio'
+        LIMIT 1
+        """
+    ).fetchone()
+
+    gini = gini_row[0] if gini_row else None
+    p90_p10 = p90_row[0] if p90_row else None
+    if gini is None and p90_p10 is None:
+        raise ValueError("USA comparison indicators not found in usa_clean.")
+    return gini, p90_p10
 
 
 def build_country_table(conn):
@@ -323,6 +371,63 @@ def plot_usa_norway_90_10_comparison(conn):
     plt.close()
 
 
+def plot_norway_three_indicators(conn):
+    rows = get_norway_indicator_series(conn)
+    years = [r[0] for r in rows]
+    gini_vals = [r[1] for r in rows]
+    p90_vals = [r[2] for r in rows]
+    s80_vals = [r[3] for r in rows]
+
+    fig, ax_left = plt.subplots(figsize=(10, 5))
+    ax_right = ax_left.twinx()
+
+    line_gini = ax_left.plot(years, gini_vals, marker="o", linewidth=2, label="Gini")[0]
+    line_p90 = ax_right.plot(years, p90_vals, marker="o", linewidth=2, label="P90/P10", color="tab:orange")[0]
+    line_s80 = ax_right.plot(years, s80_vals, marker="o", linewidth=2, label="S80/S20", color="tab:green")[0]
+
+    ax_left.set_title("Norway inequality indicators: Gini, P90/P10, S80/S20")
+    ax_left.set_xlabel("Year")
+    ax_left.set_ylabel("Gini")
+    ax_right.set_ylabel("Ratios")
+    ax_left.grid(True, alpha=0.3)
+
+    handles = [line_gini, line_p90, line_s80]
+    labels = [h.get_label() for h in handles]
+    ax_left.legend(handles, labels, loc="upper left")
+
+    fig.tight_layout()
+    fig.savefig(NORWAY_3_INDICATORS_PNG, dpi=150)
+    plt.close(fig)
+
+
+def plot_usa_norway_comparison(conn):
+    norway_rows = get_norway_indicator_series(conn)
+    norway_latest = norway_rows[-1]
+    norway_gini = norway_latest[1]
+    norway_p90 = norway_latest[2]
+
+    usa_gini, usa_p90 = get_usa_latest_gini_and_90_10(conn)
+
+    categories = ["Gini", "P90/P10"]
+    norway_values = [norway_gini, norway_p90]
+    usa_values = [usa_gini, usa_p90]
+
+    x = [0, 1]
+    width = 0.35
+
+    plt.figure(figsize=(8, 5))
+    plt.bar([i - width / 2 for i in x], norway_values, width=width, label="Norway")
+    plt.bar([i + width / 2 for i in x], usa_values, width=width, label="USA")
+    plt.xticks(x, categories)
+    plt.title("USA vs Norway comparison (latest available)")
+    plt.ylabel("Value")
+    plt.grid(axis="y", alpha=0.3)
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(USA_NORWAY_COMPARISON_PNG, dpi=150)
+    plt.close()
+
+
 def main():
     if not DB_PATH.exists():
         raise FileNotFoundError(f"Database not found: {DB_PATH}")
@@ -336,12 +441,16 @@ def main():
         plot_norway_inequality_trend(conn)
         plot_welfare_context_comparison(conn)
         plot_usa_norway_90_10_comparison(conn)
+        plot_norway_three_indicators(conn)
+        plot_usa_norway_comparison(conn)
 
     print(f"Created comparison table: {COMPARISON_CSV}")
     print(f"Created markdown table:  {COMPARISON_MD}")
     print(f"Created chart:           {NORWAY_TREND_PNG}")
     print(f"Created chart:           {WELFARE_CONTEXT_PNG}")
     print(f"Created chart:           {USA_NORWAY_90_10_PNG}")
+    print(f"Created chart:           {NORWAY_3_INDICATORS_PNG}")
+    print(f"Created chart:           {USA_NORWAY_COMPARISON_PNG}")
 
 
 if __name__ == "__main__":
