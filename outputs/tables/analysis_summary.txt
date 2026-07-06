@@ -1,6 +1,6 @@
 Income inequality analysis summary
 Database: C:\Prosject\Dataanalyse\income-inequality-welfare-analysis\database\database.db
-Tables found: 12
+Tables found: 13
 
 ## Table quality profile
 - norway: 28 rows, 9 columns
@@ -76,6 +76,13 @@ Tables found: 12
   - measure: 26/26 non-empty (100.0%)
   - year_2023_estimate: 26/26 non-empty (100.0%)
   - year_2023_moe: 26/26 non-empty (100.0%)
+  - ...
+- user_country_indicators: 1 rows, 10 columns
+  - country: 1/1 non-empty (100.0%)
+  - year: 1/1 non-empty (100.0%)
+  - gini: 1/1 non-empty (100.0%)
+  - p90_p10: 1/1 non-empty (100.0%)
+  - s80_s20: 1/1 non-empty (100.0%)
   - ...
 
 ## Norway inequality trend
