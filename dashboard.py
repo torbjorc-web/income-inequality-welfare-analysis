@@ -1,4 +1,6 @@
 import sqlite3
+import subprocess
+import sys
 from pathlib import Path
 
 import pandas as pd
@@ -7,6 +9,12 @@ import streamlit as st
 
 BASE_DIR = Path(__file__).resolve().parent
 DB_PATH = BASE_DIR / "database" / "database.db"
+REQUIRED_TABLES = {
+    "norway_inequality_indicators_clean",
+    "usa_clean",
+    "philippines_clean",
+    "norway_public_services",
+}
 
 
 def choose_latest_not_after(df, year):
@@ -14,6 +22,49 @@ def choose_latest_not_after(df, year):
     if filtered.empty:
         return None
     return filtered.iloc[-1]
+
+
+def get_missing_tables(db_path):
+    if not db_path.exists():
+        return sorted(REQUIRED_TABLES)
+
+    with sqlite3.connect(db_path) as conn:
+        rows = conn.execute(
+            "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
+        ).fetchall()
+    existing_tables = {row[0] for row in rows}
+    return sorted(REQUIRED_TABLES - existing_tables)
+
+
+def run_python_script(script_path):
+    result = subprocess.run(
+        [sys.executable, str(script_path)],
+        capture_output=True,
+        text=True,
+        cwd=str(BASE_DIR),
+    )
+    if result.returncode != 0:
+        raise RuntimeError(
+            f"Failed to run {script_path.name}.\n\n"
+            f"STDOUT:\n{result.stdout}\n"
+            f"STDERR:\n{result.stderr}"
+        )
+
+
+def ensure_database_ready():
+    missing_tables = get_missing_tables(DB_PATH)
+    if not missing_tables:
+        return
+
+    run_python_script(BASE_DIR / "setup_database.py")
+    run_python_script(BASE_DIR / "scripts" / "clean_data.py")
+
+    missing_after = get_missing_tables(DB_PATH)
+    if missing_after:
+        raise RuntimeError(
+            "Database bootstrap finished but required tables are still missing: "
+            + ", ".join(missing_after)
+        )
 
 
 def parse_number(value):
@@ -171,13 +222,20 @@ def main():
     st.title("Inequality & Welfare Dashboard")
     st.caption("Norway, USA, and Philippines comparison using cleaned project data")
 
-    (
-        norway_df,
-        usa_df,
-        ph_row,
-        norway_welfare_total,
-        usa_lowest_quintile_share,
-    ) = load_data(str(DB_PATH))
+    try:
+        with st.spinner("Preparing database (first run on cloud may take up to a minute)..."):
+            ensure_database_ready()
+        (
+            norway_df,
+            usa_df,
+            ph_row,
+            norway_welfare_total,
+            usa_lowest_quintile_share,
+        ) = load_data(str(DB_PATH))
+    except Exception as exc:
+        st.error("Unable to initialize dashboard data.")
+        st.exception(exc)
+        st.stop()
 
     norway_series = norway_df[["year", "gini_all_population", "gini_excl_student_households"]].copy()
     usa_series = build_usa_gini_series(usa_df)
