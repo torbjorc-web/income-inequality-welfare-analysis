@@ -1,220 +1,22 @@
-import sqlite3
-import subprocess
-import sys
-from pathlib import Path
-
 import pandas as pd
 import streamlit as st
 
-
-BASE_DIR = Path(__file__).resolve().parent
-DB_PATH = BASE_DIR / "database" / "database.db"
-REQUIRED_TABLES = {
-    "norway_inequality_indicators_clean",
-    "usa_clean",
-    "philippines_clean",
-    "norway_public_services",
-}
-
-
-def choose_latest_not_after(df, year):
-    filtered = df[df["year"] <= year]
-    if filtered.empty:
-        return None
-    return filtered.iloc[-1]
-
-
-def get_missing_tables(db_path):
-    if not db_path.exists():
-        return sorted(REQUIRED_TABLES)
-
-    with sqlite3.connect(db_path) as conn:
-        rows = conn.execute(
-            "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
-        ).fetchall()
-    existing_tables = {row[0] for row in rows}
-    return sorted(REQUIRED_TABLES - existing_tables)
-
-
-def run_python_script(script_path):
-    result = subprocess.run(
-        [sys.executable, str(script_path)],
-        capture_output=True,
-        text=True,
-        cwd=str(BASE_DIR),
-    )
-    if result.returncode != 0:
-        raise RuntimeError(
-            f"Failed to run {script_path.name}.\n\n"
-            f"STDOUT:\n{result.stdout}\n"
-            f"STDERR:\n{result.stderr}"
-        )
-
-
-def ensure_database_ready():
-    missing_tables = get_missing_tables(DB_PATH)
-    if not missing_tables:
-        return
-
-    run_python_script(BASE_DIR / "setup_database.py")
-    run_python_script(BASE_DIR / "scripts" / "clean_data.py")
-
-    missing_after = get_missing_tables(DB_PATH)
-    if missing_after:
-        raise RuntimeError(
-            "Database bootstrap finished but required tables are still missing: "
-            + ", ".join(missing_after)
-        )
-
-
-def parse_number(value):
-    if value is None:
-        return None
-    text = str(value).strip()
-    if not text:
-        return None
-    text = text.replace(" ", "").replace("%", "").replace(",", ".")
-    cleaned = []
-    for ch in text:
-        if ch.isdigit() or ch in {".", "-"}:
-            cleaned.append(ch)
-        else:
-            break
-    if not cleaned:
-        return None
-    try:
-        return float("".join(cleaned))
-    except ValueError:
-        return None
-
-
-def pick_usa_value(usa_df, measure, year):
-    row = usa_df[
-        (usa_df["income_type"] == "MONEY INCOME")
-        & (usa_df["measure"] == measure)
-    ]
-    if row.empty:
-        return None, None
-
-    row = row.iloc[0]
-    if year >= 2024 and pd.notna(row["year_2024_estimate"]):
-        return float(row["year_2024_estimate"]), 2024
-    if pd.notna(row["year_2023_estimate"]):
-        return float(row["year_2023_estimate"]), 2023
-    return None, None
-
-
-def pick_ph_gini(ph_row, year):
-    series = [
-        (2009, ph_row["gini_2009"]),
-        (2012, ph_row["gini_2012"]),
-        (2015, ph_row["gini_2015"]),
-        (2018, ph_row["gini_2018"]),
-        (2021, ph_row["gini_2021"]),
-        (2023, ph_row["gini_2023"]),
-    ]
-    available = [(y, float(v)) for y, v in series if pd.notna(v) and y <= year]
-    if not available:
-        return None, None
-    return available[-1][1], available[-1][0]
-
-
-def build_usa_gini_series(usa_df):
-    row = usa_df[
-        (usa_df["income_type"] == "MONEY INCOME")
-        & (usa_df["measure"] == "Gini index of income inequality")
-    ]
-    if row.empty:
-        return pd.DataFrame(columns=["country", "year", "gini"])
-
-    row = row.iloc[0]
-    records = []
-    if pd.notna(row["year_2023_estimate"]):
-        records.append({"country": "USA", "year": 2023, "gini": float(row["year_2023_estimate"])})
-    if pd.notna(row["year_2024_estimate"]):
-        records.append({"country": "USA", "year": 2024, "gini": float(row["year_2024_estimate"] )})
-    return pd.DataFrame(records)
-
-
-def build_ph_gini_series(ph_row):
-    return pd.DataFrame(
-        [
-            {"country": "Philippines", "year": 2009, "gini": ph_row["gini_2009"]},
-            {"country": "Philippines", "year": 2012, "gini": ph_row["gini_2012"]},
-            {"country": "Philippines", "year": 2015, "gini": ph_row["gini_2015"]},
-            {"country": "Philippines", "year": 2018, "gini": ph_row["gini_2018"]},
-            {"country": "Philippines", "year": 2021, "gini": ph_row["gini_2021"]},
-            {"country": "Philippines", "year": 2023, "gini": ph_row["gini_2023"]},
-        ]
-    ).dropna(subset=["gini"])
-
-
-def get_norway_welfare_total(conn):
-    row = conn.execute(
-        """
-        SELECT "Barnehage", "Utdanning", "Pleie og omsorg", "Helse"
-        FROM "norway_public_services"
-        WHERE TRIM("Land") IN ('Norge', 'Norway')
-        LIMIT 1
-        """
-    ).fetchone()
-    if not row:
-        return None
-    values = [parse_number(v) for v in row]
-    if any(v is None for v in values):
-        return None
-    return sum(values)
-
-
-def get_usa_lowest_quintile_share(conn):
-    row = conn.execute(
-        """
-        SELECT year_2024_estimate
-        FROM usa_clean
-        WHERE income_type = 'MONEY INCOME'
-          AND group_name = 'Share of Aggregate Income by Percentile'
-          AND measure = 'Lowest quintile'
-        LIMIT 1
-        """
-    ).fetchone()
-    if not row:
-        return None
-    return float(row[0]) if row[0] is not None else None
-
-
-def get_ph_gini_improvement(ph_row):
-    if pd.isna(ph_row["gini_2009"]) or pd.isna(ph_row["gini_2023"]):
-        return None
-    return float(ph_row["gini_2009"] - ph_row["gini_2023"])
+from src.config import BASE_DIR, DB_PATH, REQUIRED_TABLES, USER_COUNTRY_TABLE
+from src.data.bootstrap import ensure_database_ready, ensure_user_country_table
+from src.data.repository import load_core_data
+from src.services.metrics import (
+    build_ph_gini_series,
+    build_usa_gini_series,
+    choose_latest_not_after,
+    get_ph_gini_improvement,
+    pick_ph_gini,
+    pick_usa_value,
+)
 
 
 @st.cache_data
-def load_data(db_path_str):
-    db_path = Path(db_path_str)
-    if not db_path.exists():
-        raise FileNotFoundError(f"Database not found: {db_path}")
-
-    with sqlite3.connect(db_path) as conn:
-        norway = pd.read_sql_query(
-            "SELECT * FROM norway_inequality_indicators_clean ORDER BY year",
-            conn,
-        )
-        usa = pd.read_sql_query("SELECT * FROM usa_clean", conn)
-        ph = pd.read_sql_query(
-            "SELECT * FROM philippines_clean WHERE region = 'Philippines' LIMIT 1",
-            conn,
-        )
-        norway_welfare_total = get_norway_welfare_total(conn)
-        usa_lowest_quintile_share = get_usa_lowest_quintile_share(conn)
-
-    if norway.empty:
-        raise ValueError("Table norway_inequality_indicators_clean is empty.")
-    if usa.empty:
-        raise ValueError("Table usa_clean is empty.")
-    if ph.empty:
-        raise ValueError("National row not found in philippines_clean.")
-
-    return norway, usa, ph.iloc[0], norway_welfare_total, usa_lowest_quintile_share
+def load_data(_db_path: str):
+    return load_core_data(DB_PATH)
 
 
 def main():
@@ -224,7 +26,8 @@ def main():
 
     try:
         with st.spinner("Preparing database (first run on cloud may take up to a minute)..."):
-            ensure_database_ready()
+            ensure_database_ready(BASE_DIR, DB_PATH, REQUIRED_TABLES)
+            ensure_user_country_table(DB_PATH, USER_COUNTRY_TABLE)
         (
             norway_df,
             usa_df,
@@ -350,7 +153,7 @@ def main():
             st.warning("No country comparison data for current filters.")
         else:
             st.bar_chart(gini_df.set_index("Country")["Gini"])
-            st.dataframe(gini_df, hide_index=True, use_container_width=True)
+            st.dataframe(gini_df, hide_index=True, width="stretch")
 
     with right:
         st.subheader("Welfare context vs inequality scatter")
@@ -385,7 +188,7 @@ def main():
             st.warning("No welfare context data available for selected countries.")
         else:
             st.scatter_chart(welfare_df.set_index("Country")[["Welfare proxy", "Inequality (Gini)"]])
-            st.dataframe(welfare_df, hide_index=True, use_container_width=True)
+            st.dataframe(welfare_df, hide_index=True, width="stretch")
 
     st.subheader("Norway inequality indicators")
     norway_indicator_df = norway_df[norway_df["year"] <= selected_year][
