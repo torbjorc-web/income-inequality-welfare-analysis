@@ -30,6 +30,25 @@ def main():
     st.title("Inequality & Welfare Dashboard")
     st.caption("Norway, USA, and Philippines comparison using cleaned project data")
 
+    with st.expander("About this dashboard", expanded=True):
+        st.markdown(
+            """
+            **Question:** How do income inequality patterns differ across Norway, USA, and Philippines, and how does welfare context affect interpretation?
+
+            **How to use filters:**
+            1. Choose countries in the sidebar.
+            2. Adjust year and Gini ranges.
+            3. Use the reference year for comparison cards and ranking.
+
+            **Data sources:** Statistics Norway (SSB), U.S. Census Bureau, Philippine Statistics Authority (PSA).
+
+            **Interpretation notes and limitations:**
+            - Indicators are harmonized where possible, but definitions and survey methods differ across countries.
+            - Welfare proxy values are country-specific context indicators and are not directly comparable spending measures.
+            - Uploaded country data is user-provided and validated for basic quality checks only.
+            """
+        )
+
     try:
         with st.spinner("Preparing database (first run on cloud may take up to a minute)..."):
             ensure_database_ready(BASE_DIR, DB_PATH, REQUIRED_TABLES)
@@ -216,6 +235,11 @@ def main():
         st.warning("No data points match the selected country/year/Gini filters.")
     else:
         st.line_chart(filtered_trends.pivot_table(index="year", columns="country", values="gini", aggfunc="mean"))
+
+    st.info(
+        "Source and limitation note: Cross-country comparisons are useful for trend direction and broad ranking, "
+        "but exact level differences should be interpreted with methodological caution."
+    )
 
     left, right = st.columns(2)
     with left:

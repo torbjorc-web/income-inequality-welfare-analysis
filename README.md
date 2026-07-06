@@ -7,6 +7,11 @@
 ![Focus](https://img.shields.io/badge/focus-data%20analysis%20%26%20visualization-green?style=for-the-badge)
 ![Countries](https://img.shields.io/badge/countries-Norway%20%7C%20USA%20%7C%20Philippines-purple?style=for-the-badge)
 
+## Live App
+
+- Streamlit dashboard: https://income-inequality-welfare-analysis-a9ngzr4evattkxng7oaxup.streamlit.app/
+- Embed-friendly URL: https://income-inequality-welfare-analysis-a9ngzr4evattkxng7oaxup.streamlit.app/?embed=true
+
 ## Overview
 
 This project compares income inequality, poverty, and welfare systems across Norway, the United States, and the Philippines.
@@ -77,6 +82,10 @@ Outputs are written to:
 ## Run the Streamlit dashboard
 
 ```bash
+pip install -r requirements.txt
+```
+
+```bash
 streamlit run dashboard.py
 ```
 
@@ -86,6 +95,33 @@ The dashboard includes:
 - Norway/USA/Philippines comparison charts
 - welfare-proxy scatter context
 - CSV upload pipeline for adding custom country data into SQLite
+
+## Dashboard Screenshots
+
+![Dashboard overview](outputs/dashboard_screenshots/dashboard_overview.png)
+![Gini mode view](outputs/dashboard_screenshots/dashboard_gini_mode.png)
+![Lower panels](outputs/dashboard_screenshots/dashboard_lower_panels.png)
+
+## Data, Method, and Key Findings
+
+Data sources:
+
+- Statistics Norway (SSB)
+- U.S. Census Bureau
+- Philippine Statistics Authority (PSA)
+
+Method summary:
+
+1. Load raw data to SQLite (`setup_database.py`).
+2. Clean/normalize country tables (`scripts/clean_data.py`).
+3. Build comparisons and summaries (`scripts/analyze_data.py`).
+4. Serve interactive analysis via Streamlit (`dashboard.py`).
+
+Key findings (current snapshot):
+
+- Norway has the lowest headline inequality (latest Gini in project data).
+- USA has the highest headline inequality in the comparison.
+- Philippines improved national Gini over time but remains above Norway.
 
 ## Publish DB changes to GitHub (one command)
 
