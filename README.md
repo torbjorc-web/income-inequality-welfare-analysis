@@ -57,13 +57,8 @@ python scripts/analyze_data.py
 python scripts/make_charts.py
 ```
 
-Dashboard:
-
-```bash
-streamlit run dashboard.py
-```
-
 Outputs are written to:
+
 - `outputs/figures/` (charts)
 - `outputs/tables/` (summary tables and text outputs)
 
@@ -100,15 +95,3 @@ Early development stage.
 - `norway_gini_p90p10_s80s20.png`: shows that different inequality indicators in Norway move together over time.
 - `usa_norway_comparison.png`: highlights the gap between Norway and USA on latest available Gini and P90/P10 ratios.
 - `country_headline_comparison.md`: compact, portfolio-ready comparison table with key context indicators.
-
-## What I learned
-
-- How to build a repeatable analysis pipeline from raw CSV files to cleaned tables, database views, and final figures.
-- How methodological choices (for example SNA vs EU-skala) can change interpretation of inequality and poverty.
-- How to present cross-country comparisons with clear assumptions and transparent limitations.
-
-## Next steps
-
-- Add a focused poverty indicator comparison (for example at-risk-of-poverty style metrics) where comparable series are available.
-- Add simple data quality checks/tests for key cleaned tables to catch parsing issues early.
-- Improve chart annotations and narrative captions so each figure communicates one clear takeaway.
