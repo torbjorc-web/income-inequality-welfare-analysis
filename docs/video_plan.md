@@ -1,62 +1,110 @@
 # Weekly Video Plan
 
-## 3 Video Ideas For This Week
+This project is no longer in build mode. The dashboard is live, the GitHub repository is public, and the material is ready to be presented as a portfolio showcase.
 
-## Video 1: Project Walkthrough (Portfolio Intro)
+The purpose of this file is to guide recording, editing, publishing, and sharing the project video content.
 
-Goal:
+## Main Video Plan
 
-- Give a clear, recruiter-friendly overview of the project in 4 to 6 minutes.
+Purpose:
 
-Outline:
+- Create a public showcase video for YouTube, portfolio viewers, teachers, classmates, and future employers.
 
-1. Problem and motivation (why inequality + welfare comparison matters).
-2. Data sources and credibility.
-3. Pipeline summary (raw data to SQLite to Streamlit).
-4. Live dashboard tour and key filters.
-5. Three headline findings.
-6. What you would improve next.
+Target length:
 
-Suggested title:
+- 2 to 4 minutes for the main showcase version.
 
-- "Income Inequality Dashboard: Norway vs USA vs Philippines (Data Project Walkthrough)"
+Audience:
 
-## Video 2: Dashboard Demo + CSV Upload Feature
+- Teacher or examiner
+- Classmates
+- Recruiters or hiring managers
+- Portfolio visitors
 
-Goal:
+Main structure:
 
-- Show practical product value and your implementation skills.
-
-Outline:
-
-1. Quick app intro.
-2. Explain the upload template and required columns.
-3. Upload a new country CSV.
-4. Validate and import.
-5. Show the country appearing in charts/ranking/scatter.
-6. Mention validation rules and limitations.
+1. Hook: what the project is and why it matters.
+2. Project question: how inequality and welfare differ across Norway, USA, and Philippines.
+3. Method: raw data, SQLite, cleaning, analysis, and Streamlit dashboard.
+4. Dashboard demo: filters, headline metrics, trend chart, comparison views.
+5. Findings: 2 to 3 key takeaways.
+6. Conclusion: what the project demonstrates and what you would improve next.
 
 Suggested title:
 
-- "How I Added Custom Country Uploads to a Streamlit Inequality Dashboard"
+- "Income Inequality Dashboard: Norway vs USA vs Philippines"
 
-## Video 3: Methods and Limitations (Credibility Video)
+## Optional Second Video
 
-Goal:
+Purpose:
 
-- Demonstrate critical thinking and responsible interpretation.
+- Show analytical maturity and explain limitations clearly.
 
-Outline:
+Target length:
 
-1. Explain Gini, P90/P10, S80/S20 in plain language.
-2. Explain welfare proxy concept by country.
-3. SNA vs EU-skala note and why equivalence scales matter.
-4. Comparability limits across countries and data definitions.
-5. How to read the findings responsibly.
+- 2 to 3 minutes.
+
+Focus:
+
+1. What Gini, P90/P10, and S80/S20 mean.
+2. Why welfare context changes interpretation.
+3. SNA vs EU-skala note.
+4. Why cross-country comparisons need caution.
 
 Suggested title:
 
-- "How To Compare Inequality Across Countries Without Misleading Conclusions"
+- "How To Compare Inequality Across Countries Responsibly"
+
+## Optional Third Video
+
+Purpose:
+
+- Show implementation depth for viewers who care more about code and product decisions.
+
+Target length:
+
+- 3 to 5 minutes.
+
+Focus:
+
+1. Repository structure.
+2. Data pipeline overview.
+3. Streamlit app structure.
+4. CSV upload feature and validation logic.
+5. What changed during the project and why.
+
+Suggested title:
+
+- "Behind the Code: Building a Streamlit Inequality Dashboard with Python and SQLite"
+
+## Assets To Show
+
+- Streamlit live app
+- GitHub repository
+- PowerPoint presentation
+- Dashboard screenshots
+- Key charts from `outputs/figures/`
+
+## Recording Checklist
+
+- Open the live Streamlit app and confirm it loads.
+- Open the GitHub repository landing page.
+- Open the PowerPoint or PDF export.
+- Decide which charts you want to reference.
+- Prepare a short script before recording.
+- Keep browser tabs clean and zoom readable.
+- Record in a quiet room with clear microphone audio.
+
+## Publishing Checklist
+
+- Finalize title.
+- Write description.
+- Add GitHub link.
+- Add Streamlit link.
+- Add presentation link.
+- Create thumbnail.
+- Upload to YouTube.
+- Share in README, LinkedIn, or portfolio site.
 
 ## Channel About Draft
 
@@ -66,22 +114,22 @@ Short version:
 
 Long version:
 
-- "I build practical data projects from raw public datasets to interactive dashboards. This channel documents my work on income inequality, welfare systems, and cross-country comparisons using Python, SQL, and Streamlit. Each video explains the method, key findings, and limitations so results are transparent and reproducible."
+- "I build practical data projects from raw public datasets to interactive dashboards. This channel documents my work on income inequality, welfare systems, and cross-country comparisons using Python, SQL, and Streamlit. Each video explains the method, key findings, and limitations so the results stay transparent and reproducible."
 
 ## Video Description Template
 
-- What this video covers
-- Why it matters
-- Data sources used
-- Key takeaway (1 to 2 lines)
+- One sentence hook
+- One sentence on why it matters
+- One or two data source lines
+- One key takeaway
 - Links:
   - Live app
   - GitHub repo
   - Presentation
-  - Channel
+  - YouTube channel
 
-## Suggested Upload Sequence
+## Best Order For This Week
 
-1. Publish Video 1 first (project context).
-2. Publish Video 2 second (hands-on feature proof).
-3. Publish Video 3 third (method quality and maturity).
+1. Record the main showcase video first.
+2. Record the methods and limitations video second.
+3. Record the dashboard/code walkthrough third.
