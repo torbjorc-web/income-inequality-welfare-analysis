@@ -16,6 +16,27 @@ def choose_latest_not_after(df, year):
     return filtered.iloc[-1]
 
 
+def parse_number(value):
+    if value is None:
+        return None
+    text = str(value).strip()
+    if not text:
+        return None
+    text = text.replace(" ", "").replace("%", "").replace(",", ".")
+    cleaned = []
+    for ch in text:
+        if ch.isdigit() or ch in {".", "-"}:
+            cleaned.append(ch)
+        else:
+            break
+    if not cleaned:
+        return None
+    try:
+        return float("".join(cleaned))
+    except ValueError:
+        return None
+
+
 def pick_usa_value(usa_df, measure, year):
     row = usa_df[
         (usa_df["income_type"] == "MONEY INCOME")
@@ -47,6 +68,75 @@ def pick_ph_gini(ph_row, year):
     return available[-1][1], available[-1][0]
 
 
+def build_usa_gini_series(usa_df):
+    row = usa_df[
+        (usa_df["income_type"] == "MONEY INCOME")
+        & (usa_df["measure"] == "Gini index of income inequality")
+    ]
+    if row.empty:
+        return pd.DataFrame(columns=["country", "year", "gini"])
+
+    row = row.iloc[0]
+    records = []
+    if pd.notna(row["year_2023_estimate"]):
+        records.append({"country": "USA", "year": 2023, "gini": float(row["year_2023_estimate"])})
+    if pd.notna(row["year_2024_estimate"]):
+        records.append({"country": "USA", "year": 2024, "gini": float(row["year_2024_estimate"] )})
+    return pd.DataFrame(records)
+
+
+def build_ph_gini_series(ph_row):
+    return pd.DataFrame(
+        [
+            {"country": "Philippines", "year": 2009, "gini": ph_row["gini_2009"]},
+            {"country": "Philippines", "year": 2012, "gini": ph_row["gini_2012"]},
+            {"country": "Philippines", "year": 2015, "gini": ph_row["gini_2015"]},
+            {"country": "Philippines", "year": 2018, "gini": ph_row["gini_2018"]},
+            {"country": "Philippines", "year": 2021, "gini": ph_row["gini_2021"]},
+            {"country": "Philippines", "year": 2023, "gini": ph_row["gini_2023"]},
+        ]
+    ).dropna(subset=["gini"])
+
+
+def get_norway_welfare_total(conn):
+    row = conn.execute(
+        """
+        SELECT "Barnehage", "Utdanning", "Pleie og omsorg", "Helse"
+        FROM "norway_public_services"
+        WHERE TRIM("Land") IN ('Norge', 'Norway')
+        LIMIT 1
+        """
+    ).fetchone()
+    if not row:
+        return None
+    values = [parse_number(v) for v in row]
+    if any(v is None for v in values):
+        return None
+    return sum(values)
+
+
+def get_usa_lowest_quintile_share(conn):
+    row = conn.execute(
+        """
+        SELECT year_2024_estimate
+        FROM usa_clean
+        WHERE income_type = 'MONEY INCOME'
+          AND group_name = 'Share of Aggregate Income by Percentile'
+          AND measure = 'Lowest quintile'
+        LIMIT 1
+        """
+    ).fetchone()
+    if not row:
+        return None
+    return float(row[0]) if row[0] is not None else None
+
+
+def get_ph_gini_improvement(ph_row):
+    if pd.isna(ph_row["gini_2009"]) or pd.isna(ph_row["gini_2023"]):
+        return None
+    return float(ph_row["gini_2009"] - ph_row["gini_2023"])
+
+
 @st.cache_data
 def load_data(db_path_str):
     db_path = Path(db_path_str)
@@ -71,7 +161,10 @@ def load_data(db_path_str):
     if ph.empty:
         raise ValueError("National row not found in philippines_clean.")
 
-    return norway, usa, ph.iloc[0]
+        norway_welfare_total = get_norway_welfare_total(conn)
+        usa_lowest_quintile_share = get_usa_lowest_quintile_share(conn)
+
+    return norway, usa, ph.iloc[0], norway_welfare_total, usa_lowest_quintile_share
 
 
 def main():
@@ -79,20 +172,44 @@ def main():
     st.title("Inequality & Welfare Dashboard")
     st.caption("Norway, USA, and Philippines comparison using cleaned project data")
 
-    norway_df, usa_df, ph_row = load_data(str(DB_PATH))
+    (
+        norway_df,
+        usa_df,
+        ph_row,
+        norway_welfare_total,
+        usa_lowest_quintile_share,
+    ) = load_data(str(DB_PATH))
 
-    min_year = int(norway_df["year"].min())
-    max_year = int(norway_df["year"].max())
+    norway_series = norway_df[["year", "gini_all_population", "gini_excl_student_households"]].copy()
+    usa_series = build_usa_gini_series(usa_df)
+    ph_series = build_ph_gini_series(ph_row)
+
+    min_year = int(min(norway_df["year"].min(), 2009))
+    max_year = int(max(norway_df["year"].max(), 2024))
 
     st.sidebar.header("Controls")
+    selected_countries = st.sidebar.multiselect(
+        "Countries",
+        ["Norway", "USA", "Philippines"],
+        default=["Norway", "USA", "Philippines"],
+    )
+    year_start, year_end = st.sidebar.slider(
+        "Year range",
+        min_year,
+        max_year,
+        (min_year, max_year),
+    )
+    gini_min, gini_max = st.sidebar.slider(
+        "Gini range",
+        0.15,
+        0.60,
+        (0.20, 0.50),
+        step=0.01,
+    )
     selected_year = st.sidebar.slider("Reference year", min_year, max_year, max_year)
     population = st.sidebar.selectbox(
         "Norway population definition",
         ["All population", "Excl. student households"],
-    )
-    trend_mode = st.sidebar.selectbox(
-        "Norway trend view",
-        ["All indicators", "Gini", "P90/P10", "S80/S20"],
     )
 
     if population == "All population":
@@ -103,6 +220,24 @@ def main():
         norway_gini_col = "gini_excl_student_households"
         norway_p90_col = "p90_p10_excl_student_households"
         norway_s80_col = "s80_s20_excl_student_households"
+
+    norway_country_series = norway_series[["year", norway_gini_col]].rename(columns={norway_gini_col: "gini"})
+    norway_country_series["country"] = "Norway"
+
+    trends = pd.concat(
+        [
+            norway_country_series[["country", "year", "gini"]],
+            usa_series[["country", "year", "gini"]],
+            ph_series[["country", "year", "gini"]],
+        ],
+        ignore_index=True,
+    )
+
+    filtered_trends = trends[
+        (trends["country"].isin(selected_countries))
+        & (trends["year"].between(year_start, year_end))
+        & (trends["gini"].between(gini_min, gini_max))
+    ].copy()
 
     norway_latest = choose_latest_not_after(norway_df, selected_year)
     if norway_latest is None:
@@ -139,49 +274,78 @@ def main():
         + " > ".join([f"{country} ({value:.3f})" for country, value in valid_rank])
     )
 
-    st.subheader("Norway trend panel")
-    trend_df = norway_df[norway_df["year"] <= selected_year].copy()
-    trend_columns = {
-        "Gini": norway_gini_col,
-        "P90/P10": norway_p90_col,
-        "S80/S20": norway_s80_col,
-    }
-    if trend_mode == "All indicators":
-        plot_df = trend_df[["year", norway_gini_col, norway_p90_col, norway_s80_col]].rename(
-            columns={
-                norway_gini_col: "Gini",
-                norway_p90_col: "P90/P10",
-                norway_s80_col: "S80/S20",
-            }
-        )
+    st.subheader("Gini trends over time")
+    if filtered_trends.empty:
+        st.warning("No data points match the selected country/year/Gini filters.")
     else:
-        col = trend_columns[trend_mode]
-        plot_df = trend_df[["year", col]].rename(columns={col: trend_mode})
-    st.line_chart(plot_df.set_index("year"))
+        st.line_chart(filtered_trends.pivot_table(index="year", columns="country", values="gini", aggfunc="mean"))
 
     left, right = st.columns(2)
     with left:
-        st.subheader("Gini comparison (USA, Norway, Philippines)")
-        gini_df = pd.DataFrame(
-            [
-                {"Country": "Norway", "Gini": norway_gini, "Year used": norway_year},
-                {"Country": "USA", "Gini": usa_gini, "Year used": usa_gini_year},
-                {"Country": "Philippines", "Gini": ph_gini, "Year used": ph_gini_year},
-            ]
-        )
-        st.bar_chart(gini_df.set_index("Country")["Gini"])
-        st.dataframe(gini_df, hide_index=True, use_container_width=True)
+        st.subheader("Country comparison (selected reference year)")
+        gini_df = pd.DataFrame([
+            {"Country": "Norway", "Gini": norway_gini, "Year used": norway_year},
+            {"Country": "USA", "Gini": usa_gini, "Year used": usa_gini_year},
+            {"Country": "Philippines", "Gini": ph_gini, "Year used": ph_gini_year},
+        ])
+        gini_df = gini_df[gini_df["Country"].isin(selected_countries)].dropna(subset=["Gini"])
+        if gini_df.empty:
+            st.warning("No country comparison data for current filters.")
+        else:
+            st.bar_chart(gini_df.set_index("Country")["Gini"])
+            st.dataframe(gini_df, hide_index=True, use_container_width=True)
 
     with right:
-        st.subheader("USA vs Norway decile ratio comparison")
-        p90_df = pd.DataFrame(
+        st.subheader("Welfare context vs inequality scatter")
+        ph_gini_improvement = get_ph_gini_improvement(ph_row)
+        welfare_df = pd.DataFrame(
             [
-                {"Country": "Norway", "P90/P10": norway_p90, "Year used": norway_year},
-                {"Country": "USA", "P90/P10": usa_p90, "Year used": usa_p90_year},
+                {
+                    "Country": "Norway",
+                    "Inequality (Gini)": norway_gini,
+                    "Welfare proxy": norway_welfare_total,
+                    "Proxy": "Public services total (Barnehage+Utdanning+Pleie/Helse)",
+                },
+                {
+                    "Country": "USA",
+                    "Inequality (Gini)": usa_gini,
+                    "Welfare proxy": usa_lowest_quintile_share,
+                    "Proxy": "Lowest quintile income share",
+                },
+                {
+                    "Country": "Philippines",
+                    "Inequality (Gini)": ph_gini,
+                    "Welfare proxy": ph_gini_improvement,
+                    "Proxy": "National Gini improvement since 2009",
+                },
             ]
         )
-        st.bar_chart(p90_df.set_index("Country")["P90/P10"])
-        st.dataframe(p90_df, hide_index=True, use_container_width=True)
+        welfare_df = welfare_df[
+            welfare_df["Country"].isin(selected_countries)
+        ].dropna(subset=["Inequality (Gini)", "Welfare proxy"])
+
+        if welfare_df.empty:
+            st.warning("No welfare context data available for selected countries.")
+        else:
+            st.scatter_chart(welfare_df.set_index("Country")[["Welfare proxy", "Inequality (Gini)"]])
+            st.dataframe(welfare_df, hide_index=True, use_container_width=True)
+
+    st.subheader("Norway inequality indicators")
+    norway_indicator_df = norway_df[norway_df["year"] <= selected_year][
+        ["year", norway_gini_col, norway_p90_col, norway_s80_col]
+    ].rename(
+        columns={
+            norway_gini_col: "Gini",
+            norway_p90_col: "P90/P10",
+            norway_s80_col: "S80/S20",
+        }
+    )
+    st.line_chart(norway_indicator_df.set_index("year"))
+
+    st.caption(
+        "Note: Welfare scatter uses available country-specific welfare proxies from SQLite tables; "
+        "units differ by country and are intended for exploratory context rather than strict like-for-like spending comparison."
+    )
 
 
 if __name__ == "__main__":

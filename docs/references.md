@@ -26,5 +26,4 @@
 
 - Atkinson, A. B. (2015). *Inequality: What Can Be Done?* Harvard University Press.
 - OECD. (2021). *Society at a Glance: OECD Social Indicators.* OECD Publishing.
-- World Bank. *PovcalNet / Poverty and Inequality Platform* — https://pip.worldbank.org
-
+- World Bank. *PovcalNet / Poverty and Inequality Platform* — [https://pip.worldbank.org](https://pip.worldbank.org)
