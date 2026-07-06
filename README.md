@@ -17,6 +17,18 @@ It examines how public services and equivalence scales change the interpretation
 
 For a short explanation of **SNA vs EU-skala** and why equivalence-scale choice matters, see `docs/methodology.md`.
 
+## Presentation
+
+- PowerPoint walkthrough: [income_inequality_welfare_analysis_presentation_polished.pptx](https://1drv.ms/p/c/4246acc26547a1fc/IQD3jhAcVuRPSYF4dYweL2VpAVFl818193NJHlZWpirrwmc?e=aM2McJ)
+
+The presentation explains the project story from problem framing to data pipeline, dashboard design, core findings for Norway/USA/Philippines, and practical limitations in cross-country comparison.
+
+## Video Walkthrough
+
+- Project walkthrough video: [Add your video link here](https://example.com/video-link)
+
+Recommended video flow: problem context, data and method, live dashboard demo (including CSV upload), key findings, and next improvements.
+
 ## Why this project
 
 I wanted to build a portfolio project that shows real data analysis skills, not just charts.

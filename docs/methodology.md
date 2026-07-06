@@ -14,9 +14,9 @@ User-provided country CSV data is integrated through a controlled mapping and va
 1. User uploads CSV in the Streamlit sidebar.
 2. User maps source columns to normalized fields.
 3. Required quality checks run before import:
-	- `year` numeric and in [1900, 2100]
-	- `gini` numeric and in [0, 1]
-	- no duplicate `country` + `year` rows in the same upload
+   - `year` numeric and in [1900, 2100]
+   - `gini` numeric and in [0, 1]
+   - no duplicate `country` + `year` rows in the same upload
 4. Valid rows are normalized and appended to SQLite.
 5. Uploaded countries are included in trends, rankings, comparisons, and welfare scatter views.
 
