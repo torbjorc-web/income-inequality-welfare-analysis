@@ -188,6 +188,11 @@ Imported rows are stored in SQLite and included in country selector, trend chart
 - `docs/` — project description, methodology, and references.
 - `assets/` — cover image and badge notes.
 
+Additional docs:
+
+- `docs/data_dictionary.md` — table and column definitions for core datasets.
+- `docs/reflection.md` — lessons learned, challenges, and next improvements.
+
 ## What I Am Building
 
 - Cleaned datasets.
@@ -215,3 +220,15 @@ Active and deployable.
 - `norway_gini_p90p10_s80s20.png`: shows that different inequality indicators in Norway move together over time.
 - `usa_norway_comparison.png`: highlights the gap between Norway and USA on latest available Gini and P90/P10 ratios.
 - `country_headline_comparison.md`: compact, portfolio-ready comparison table with key context indicators.
+
+## Troubleshooting
+
+- App does not load on Streamlit Cloud:
+  - Check `requirements.txt` includes `streamlit`, `pandas`, and `matplotlib`.
+  - Confirm app entrypoint is `dashboard.py` on the `main` branch.
+- Database tables missing or stale locally:
+  - Run `python setup_database.py` then `python scripts/clean_data.py`.
+  - Or run `python scripts/release_db_snapshot.py --skip-push` for a full local rebuild.
+- Notebook diagnostics show undefined names:
+  - Run notebook cells in order from top to bottom.
+  - Ensure `database/database.db` exists before running analysis notebooks.
