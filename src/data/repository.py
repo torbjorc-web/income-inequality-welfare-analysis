@@ -83,3 +83,74 @@ def load_core_data(db_path: Path):
         raise ValueError("National row not found in philippines_clean.")
 
     return norway, usa, ph.iloc[0], norway_welfare_total, usa_lowest_quintile_share
+
+
+def load_user_country_data(db_path: Path, table_name: str) -> pd.DataFrame:
+    if not db_path.exists():
+        return pd.DataFrame(
+            columns=[
+                "country",
+                "year",
+                "gini",
+                "p90_p10",
+                "s80_s20",
+                "welfare_proxy_value",
+                "welfare_proxy_label",
+                "source",
+                "notes",
+            ]
+        )
+
+    with sqlite3.connect(db_path) as conn:
+        try:
+            return pd.read_sql_query(
+                f"""
+                SELECT country, year, gini, p90_p10, s80_s20, welfare_proxy_value,
+                       welfare_proxy_label, source, notes
+                FROM {table_name}
+                ORDER BY country, year
+                """,
+                conn,
+            )
+        except Exception:
+            return pd.DataFrame(
+                columns=[
+                    "country",
+                    "year",
+                    "gini",
+                    "p90_p10",
+                    "s80_s20",
+                    "welfare_proxy_value",
+                    "welfare_proxy_label",
+                    "source",
+                    "notes",
+                ]
+            )
+
+
+def save_user_country_data(db_path: Path, table_name: str, df: pd.DataFrame) -> None:
+    rows = [
+        (
+            str(row.country).strip(),
+            int(row.year),
+            float(row.gini),
+            None if pd.isna(row.p90_p10) else float(row.p90_p10),
+            None if pd.isna(row.s80_s20) else float(row.s80_s20),
+            None if pd.isna(row.welfare_proxy_value) else float(row.welfare_proxy_value),
+            None if not str(row.welfare_proxy_label).strip() else str(row.welfare_proxy_label).strip(),
+            None if not str(row.source).strip() else str(row.source).strip(),
+            None if not str(row.notes).strip() else str(row.notes).strip(),
+        )
+        for row in df.itertuples(index=False)
+    ]
+
+    with sqlite3.connect(db_path) as conn:
+        conn.executemany(
+            f"""
+            INSERT OR REPLACE INTO {table_name}
+            (country, year, gini, p90_p10, s80_s20, welfare_proxy_value, welfare_proxy_label, source, notes)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            rows,
+        )
+        conn.commit()

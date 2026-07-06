@@ -62,6 +62,38 @@ Outputs are written to:
 - `outputs/figures/` (charts)
 - `outputs/tables/` (summary tables and text outputs)
 
+## Add your own country data in the dashboard
+
+The Streamlit dashboard supports importing country-level inequality data from CSV.
+
+1. Open the dashboard and expand `Add your own country data (CSV)` in the sidebar.
+2. Download the template from the app or use `data/country_upload_template.csv`.
+3. Upload your CSV and map columns in the UI.
+4. Run `Validate and import CSV`.
+
+Minimum required fields:
+
+- `country` (or fixed country name in the UI)
+- `year`
+- `gini`
+
+Optional fields:
+
+- `p90_p10`
+- `s80_s20`
+- `welfare_proxy_value`
+- `welfare_proxy_label`
+- `source`
+- `notes`
+
+Validation rules:
+
+- `year` must be numeric and between 1900 and 2100
+- `gini` must be numeric and between 0 and 1
+- no duplicate `country` + `year` rows in one upload
+
+Imported rows are stored in SQLite and included in country selector, trend chart, ranking, and comparison views.
+
 ## Repository Structure
 
 - `data/raw/` — original source files.
