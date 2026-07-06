@@ -30,7 +30,7 @@ The presentation explains the project story from problem framing to data pipelin
 
 ## Video Walkthrough
 
-- Project walkthrough video: [Add your video link here](https://example.com/video-link)
+- Project walkthrough video: [YouTube channel / Studio](https://studio.youtube.com/channel/UCY4HNGfLRSIcls_4h6oq_PA)
 
 Recommended video flow: problem context, data and method, live dashboard demo (including CSV upload), key findings, and next improvements.
 
