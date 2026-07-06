@@ -75,6 +75,29 @@ The dashboard includes:
 - welfare-proxy scatter context
 - CSV upload pipeline for adding custom country data into SQLite
 
+## Publish DB changes to GitHub (one command)
+
+Use the release helper to rebuild data artifacts, run checks, and create a consistent commit.
+
+```bash
+python scripts/release_db_snapshot.py
+```
+
+What it does:
+
+1. Runs `setup_database.py`
+2. Runs `scripts/clean_data.py`
+3. Runs `scripts/analyze_data.py`
+4. Runs `scripts/make_charts.py` (unless `--skip-charts`)
+5. Stages `database/database.db`, `data/processed/`, and `outputs/tables/`
+6. Commits and pushes to `origin/main`
+
+Useful flags:
+
+- `--message "your commit message"`
+- `--skip-push` (create local commit only)
+- `--skip-charts` (faster run)
+
 ## Add your own country data in the dashboard
 
 The Streamlit dashboard supports importing country-level inequality data from CSV.
