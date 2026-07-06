@@ -37,10 +37,12 @@ These sources provide comparable indicators such as Gini coefficients, poverty r
 The analysis is carried out in several steps:
 
 1. Collect and review the source datasets.
-2. Clean and standardize the data.
-3. Compare inequality and poverty indicators across countries.
-4. Visualize the results using charts and summary tables.
-5. Interpret the findings in the context of welfare policy and material living conditions.
+2. Load source data into SQLite for reproducible processing.
+3. Clean and standardize the data with pandas scripts.
+4. Compare inequality and poverty indicators across countries.
+5. Visualize results with charts, summary tables, and a Streamlit dashboard.
+6. Interpret findings in the context of welfare policy and material living conditions.
+7. Support user-extended country analysis through validated CSV upload.
 
 Where possible, the project uses consistent measures across countries. When indicators are not directly comparable, the analysis focuses on trends and patterns rather than exact one-to-one comparisons.
 
@@ -51,6 +53,7 @@ The final project will include:
 - Cleaned datasets.
 - Analytical tables.
 - Visualizations and dashboard-style figures.
+- A deployed interactive Streamlit dashboard.
 - A short written interpretation of the results.
 - A portfolio-ready GitHub repository that shows practical data analysis skills.
 
@@ -62,4 +65,9 @@ It also shows an ability to handle a topic that matters in real life: how inequa
 
 ## Current Status
 
-The project is in an early development stage. The repository structure is in place, and the next steps are to start coding, clean the data, and build the first analysis outputs.
+Core pipeline and dashboard are implemented.
+
+- Database setup, cleaning, and analysis scripts are operational.
+- Comparison charts and tables are generated under `outputs/`.
+- Streamlit dashboard is deployed and connected to repository updates.
+- User country upload pipeline is implemented with schema mapping and validation.

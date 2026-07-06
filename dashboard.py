@@ -121,6 +121,12 @@ def main():
     min_year = int(min(norway_df["year"].min(), 2009))
     max_year = int(max(norway_df["year"].max(), 2024))
 
+    st.sidebar.header("Controls")
+    population = st.sidebar.selectbox(
+        "Norway population definition",
+        ["All population", "Excl. student households"],
+    )
+
     if population == "All population":
         norway_gini_col = "gini_all_population"
         norway_p90_col = "p90_p10_all_population"
@@ -147,7 +153,6 @@ def main():
 
     available_countries = sorted(trends["country"].dropna().unique().tolist())
 
-    st.sidebar.header("Controls")
     selected_countries = st.sidebar.multiselect(
         "Countries",
         available_countries,
@@ -167,10 +172,6 @@ def main():
         step=0.01,
     )
     selected_year = st.sidebar.slider("Reference year", min_year, max_year, max_year)
-    population = st.sidebar.selectbox(
-        "Norway population definition",
-        ["All population", "Excl. student households"],
-    )
 
     filtered_trends = trends[
         (trends["country"].isin(selected_countries))

@@ -1,9 +1,24 @@
 # Methodology
 
 1. Collect relevant public datasets.
-2. Clean and standardize the indicators.
-3. Compare inequality, poverty, and income distribution measures across countries.
-4. Visualize results and write short interpretations.
+2. Ingest raw files to SQLite (`setup_database.py`).
+3. Clean and standardize indicators into analysis tables (`scripts/clean_data.py`).
+4. Generate comparative summaries and output artifacts (`scripts/analyze_data.py`, `scripts/make_charts.py`).
+5. Serve interactive analysis in Streamlit (`dashboard.py`).
+6. Optionally extend the country set with validated CSV uploads (stored in `user_country_indicators`).
+
+## Dashboard upload methodology
+
+User-provided country CSV data is integrated through a controlled mapping and validation flow:
+
+1. User uploads CSV in the Streamlit sidebar.
+2. User maps source columns to normalized fields.
+3. Required quality checks run before import:
+	- `year` numeric and in [1900, 2100]
+	- `gini` numeric and in [0, 1]
+	- no duplicate `country` + `year` rows in the same upload
+4. Valid rows are normalized and appended to SQLite.
+5. Uploaded countries are included in trends, rankings, comparisons, and welfare scatter views.
 
 ## Equivalence scales: SNA vs EU-skala
 

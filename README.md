@@ -62,6 +62,19 @@ Outputs are written to:
 - `outputs/figures/` (charts)
 - `outputs/tables/` (summary tables and text outputs)
 
+## Run the Streamlit dashboard
+
+```bash
+streamlit run dashboard.py
+```
+
+The dashboard includes:
+
+- interactive country/year/filter controls
+- Norway/USA/Philippines comparison charts
+- welfare-proxy scatter context
+- CSV upload pipeline for adding custom country data into SQLite
+
 ## Add your own country data in the dashboard
 
 The Streamlit dashboard supports importing country-level inequality data from CSV.
@@ -113,7 +126,11 @@ Imported rows are stored in SQLite and included in country selector, trend chart
 
 ## Current Status
 
-Early development stage.
+Active and deployable.
+
+- Core ETL pipeline is in place (raw CSV -> SQLite -> cleaned tables).
+- Streamlit dashboard is live and updated from the `main` branch.
+- Country CSV upload pipeline is implemented with mapping, validation, and persistence.
 
 ## Findings (current snapshot)
 
