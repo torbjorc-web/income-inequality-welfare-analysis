@@ -5,9 +5,11 @@
 ## Video 1: Project Walkthrough (Portfolio Intro)
 
 Goal:
+
 - Give a clear, recruiter-friendly overview of the project in 4 to 6 minutes.
 
 Outline:
+
 1. Problem and motivation (why inequality + welfare comparison matters).
 2. Data sources and credibility.
 3. Pipeline summary (raw data to SQLite to Streamlit).
@@ -16,14 +18,17 @@ Outline:
 6. What you would improve next.
 
 Suggested title:
+
 - "Income Inequality Dashboard: Norway vs USA vs Philippines (Data Project Walkthrough)"
 
 ## Video 2: Dashboard Demo + CSV Upload Feature
 
 Goal:
+
 - Show practical product value and your implementation skills.
 
 Outline:
+
 1. Quick app intro.
 2. Explain the upload template and required columns.
 3. Upload a new country CSV.
@@ -32,14 +37,17 @@ Outline:
 6. Mention validation rules and limitations.
 
 Suggested title:
+
 - "How I Added Custom Country Uploads to a Streamlit Inequality Dashboard"
 
 ## Video 3: Methods and Limitations (Credibility Video)
 
 Goal:
+
 - Demonstrate critical thinking and responsible interpretation.
 
 Outline:
+
 1. Explain Gini, P90/P10, S80/S20 in plain language.
 2. Explain welfare proxy concept by country.
 3. SNA vs EU-skala note and why equivalence scales matter.
@@ -47,14 +55,17 @@ Outline:
 5. How to read the findings responsibly.
 
 Suggested title:
+
 - "How To Compare Inequality Across Countries Without Misleading Conclusions"
 
 ## Channel About Draft
 
 Short version:
+
 - "Data analysis projects focused on inequality, welfare, and real-world decision support. I build end-to-end pipelines, dashboards, and explain results in clear plain language."
 
 Long version:
+
 - "I build practical data projects from raw public datasets to interactive dashboards. This channel documents my work on income inequality, welfare systems, and cross-country comparisons using Python, SQL, and Streamlit. Each video explains the method, key findings, and limitations so results are transparent and reproducible."
 
 ## Video Description Template
