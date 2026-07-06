@@ -153,6 +153,8 @@ def load_data(db_path_str):
             "SELECT * FROM philippines_clean WHERE region = 'Philippines' LIMIT 1",
             conn,
         )
+        norway_welfare_total = get_norway_welfare_total(conn)
+        usa_lowest_quintile_share = get_usa_lowest_quintile_share(conn)
 
     if norway.empty:
         raise ValueError("Table norway_inequality_indicators_clean is empty.")
@@ -160,9 +162,6 @@ def load_data(db_path_str):
         raise ValueError("Table usa_clean is empty.")
     if ph.empty:
         raise ValueError("National row not found in philippines_clean.")
-
-        norway_welfare_total = get_norway_welfare_total(conn)
-        usa_lowest_quintile_share = get_usa_lowest_quintile_share(conn)
 
     return norway, usa, ph.iloc[0], norway_welfare_total, usa_lowest_quintile_share
 
