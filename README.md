@@ -9,8 +9,8 @@
 
 ## Live App
 
-- Streamlit dashboard: https://income-inequality-welfare-analysis-a9ngzr4evattkxng7oaxup.streamlit.app/
-- Embed-friendly URL: https://income-inequality-welfare-analysis-a9ngzr4evattkxng7oaxup.streamlit.app/?embed=true
+- Streamlit dashboard: [Inequality & Welfare Dashboard](https://income-inequality-welfare-analysis-a9ngzr4evattkxng7oaxup.streamlit.app/)
+- Embed-friendly URL: [Embedded dashboard view](https://income-inequality-welfare-analysis-a9ngzr4evattkxng7oaxup.streamlit.app/?embed=true)
 
 ## Overview
 
