@@ -6,6 +6,10 @@ The purpose of this file is to guide recording, editing, publishing, and sharing
 
 ## Main Video Plan
 
+Published main showcase video:
+
+- https://youtu.be/0tfy-TU_l4o
+
 Purpose:
 
 - Create a public showcase video for YouTube, portfolio viewers, teachers, classmates, and future employers.
@@ -127,6 +131,93 @@ Long version:
   - GitHub repo
   - Presentation
   - YouTube channel
+
+## YouTube Package (Ready To Paste)
+
+Video URL:
+
+- https://youtu.be/0tfy-TU_l4o
+
+Title options:
+
+- Income Inequality, Poverty and Welfare: Norway vs USA vs Philippines | Python + SQL + Streamlit
+- Income Inequality Dashboard Project: Norway, USA, Philippines (Data Analysis Portfolio)
+- Comparing Inequality Across Countries: End-to-End Dashboard with Python, SQLite, and Streamlit
+
+Recommended final title:
+
+- Income Inequality, Poverty and Welfare: Norway vs USA vs Philippines | Python + SQL + Streamlit
+
+Description (long):
+
+In this project, I compare income inequality, poverty, and welfare context across Norway, the United States, and the Philippines.
+
+I built an end-to-end data workflow: raw public datasets -> SQLite database -> cleaning and analysis with pandas -> interactive Streamlit dashboard.
+
+The video shows:
+
+- the project question and motivation
+- the data and method
+- the dashboard flow and key views
+- headline findings and interpretation limits
+
+Key takeaway:
+
+- Headline inequality indicators are useful, but welfare structure and measurement choices (for example equivalence scales) strongly affect how cross-country comparisons should be interpreted.
+
+Data sources include Statistics Norway (SSB), U.S. Census Bureau, and Philippine Statistics Authority (PSA).
+
+Links:
+
+- Live app: https://income-inequality-welfare-analysis-a9ngzr4evattkxng7oaxup.streamlit.app/
+- GitHub repository: https://github.com/torbjorc-web/income-inequality-welfare-analysis
+- Presentation: https://1drv.ms/p/c/4246acc26547a1fc/IQD3jhAcVuRPSYF4dYweL2VpAVFl818193NJHlZWpirrwmc?e=aM2McJ
+- YouTube channel: https://www.youtube.com/channel/UCY4HNGfLRSIcls_4h6oq_PA
+
+Description (short):
+
+Portfolio project walkthrough comparing income inequality and welfare context in Norway, USA, and the Philippines using Python, SQLite, pandas, and Streamlit.
+
+Chapters (for a 2 to 4 minute version):
+
+- 00:00 Intro and project question
+- 00:20 Why cross-country inequality is hard to compare
+- 00:45 Data sources and workflow
+- 01:20 Dashboard walkthrough
+- 02:20 Key findings: Norway vs USA vs Philippines
+- 03:10 Limitations and interpretation caution
+- 03:40 Closing and next improvements
+
+Tags:
+
+- income inequality
+- welfare economics
+- poverty analysis
+- data analysis portfolio
+- python data project
+- streamlit dashboard
+- sqlite
+- pandas
+- data visualization
+- norway usa philippines
+
+Hashtags:
+
+- #DataAnalysis
+- #Python
+- #Streamlit
+- #Inequality
+- #PortfolioProject
+
+Pinned comment template:
+
+Thanks for watching. This project compares inequality and welfare context in Norway, USA, and the Philippines using an end-to-end Python + SQL + Streamlit workflow.
+
+Useful links:
+
+- Live dashboard: https://income-inequality-welfare-analysis-a9ngzr4evattkxng7oaxup.streamlit.app/
+- GitHub repo: https://github.com/torbjorc-web/income-inequality-welfare-analysis
+- Slides: https://1drv.ms/p/c/4246acc26547a1fc/IQD3jhAcVuRPSYF4dYweL2VpAVFl818193NJHlZWpirrwmc?e=aM2McJ
 
 ## Best Order For This Week
 
