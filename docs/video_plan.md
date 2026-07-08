@@ -8,7 +8,7 @@ The purpose of this file is to guide recording, editing, publishing, and sharing
 
 Published main showcase video:
 
-- https://youtu.be/0tfy-TU_l4o
+- [Main showcase video](https://youtu.be/0tfy-TU_l4o)
 
 Purpose:
 
@@ -136,7 +136,7 @@ Long version:
 
 Video URL:
 
-- https://youtu.be/0tfy-TU_l4o
+- [Published video](https://youtu.be/0tfy-TU_l4o)
 
 Title options:
 
@@ -169,10 +169,10 @@ Data sources include Statistics Norway (SSB), U.S. Census Bureau, and Philippine
 
 Links:
 
-- Live app: https://income-inequality-welfare-analysis-a9ngzr4evattkxng7oaxup.streamlit.app/
-- GitHub repository: https://github.com/torbjorc-web/income-inequality-welfare-analysis
-- Presentation: https://1drv.ms/p/c/4246acc26547a1fc/IQD3jhAcVuRPSYF4dYweL2VpAVFl818193NJHlZWpirrwmc?e=aM2McJ
-- YouTube channel: https://www.youtube.com/channel/UCY4HNGfLRSIcls_4h6oq_PA
+- Live app: [Inequality & Welfare Dashboard](https://income-inequality-welfare-analysis-a9ngzr4evattkxng7oaxup.streamlit.app/)
+- GitHub repository: [income-inequality-welfare-analysis](https://github.com/torbjorc-web/income-inequality-welfare-analysis)
+- Presentation: [Project presentation slides](https://1drv.ms/p/c/4246acc26547a1fc/IQD3jhAcVuRPSYF4dYweL2VpAVFl818193NJHlZWpirrwmc?e=aM2McJ)
+- YouTube channel: [Project channel](https://www.youtube.com/channel/UCY4HNGfLRSIcls_4h6oq_PA)
 
 Description (short):
 
@@ -215,9 +215,9 @@ Thanks for watching. This project compares inequality and welfare context in Nor
 
 Useful links:
 
-- Live dashboard: https://income-inequality-welfare-analysis-a9ngzr4evattkxng7oaxup.streamlit.app/
-- GitHub repo: https://github.com/torbjorc-web/income-inequality-welfare-analysis
-- Slides: https://1drv.ms/p/c/4246acc26547a1fc/IQD3jhAcVuRPSYF4dYweL2VpAVFl818193NJHlZWpirrwmc?e=aM2McJ
+- Live dashboard: [Inequality & Welfare Dashboard](https://income-inequality-welfare-analysis-a9ngzr4evattkxng7oaxup.streamlit.app/)
+- GitHub repo: [income-inequality-welfare-analysis](https://github.com/torbjorc-web/income-inequality-welfare-analysis)
+- Slides: [Project presentation slides](https://1drv.ms/p/c/4246acc26547a1fc/IQD3jhAcVuRPSYF4dYweL2VpAVFl818193NJHlZWpirrwmc?e=aM2McJ)
 
 ## Best Order For This Week
 
