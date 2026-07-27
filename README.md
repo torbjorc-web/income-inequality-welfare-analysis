@@ -66,6 +66,7 @@ This project builds a repeatable pipeline to compare Norway, the USA, and the Ph
 2. Clean and normalize country-specific datasets with `scripts/clean_data.py`.
 3. Generate analysis summaries and comparison metrics with `scripts/analyze_data.py`.
 4. Generate publication-ready charts/tables with `scripts/make_charts.py`.
+5. Fit and backtest a scikit-learn trend model for a selected indicator with `src/services/forecasting.py`.
 
 ## Run the project (end-to-end)
 
@@ -97,6 +98,7 @@ The dashboard includes:
 - Norway/USA/Philippines comparison charts
 - welfare-proxy scatter context
 - CSV upload pipeline for adding custom country data into SQLite
+- a **Trend forecast (machine learning)** section with scikit-learn predictions and backtest scores
 
 ## Dashboard Screenshots
 
@@ -186,6 +188,8 @@ Imported rows are stored in SQLite and included in country selector, trend chart
 - `data/processed/` — cleaned and combined datasets.
 - `notebooks/` — exploration and analysis notebooks.
 - `scripts/` — reusable Python scripts for cleaning and analysis.
+- `src/` — dashboard application code (config, SQLite repository, services incl. the ML forecast).
+- `tests/` — pytest suite for the service layer.
 - `outputs/` — charts, tables, and screenshots.
 - `docs/` — project description, methodology, and references.
 - `assets/` — cover image and badge notes.
@@ -194,6 +198,31 @@ Additional docs:
 
 - `docs/data_dictionary.md` — table and column definitions for core datasets.
 - `docs/reflection.md` — lessons learned, challenges, and next improvements.
+
+## Machine learning: inequality trend forecast
+
+The dashboard includes a scikit-learn regression model that projects an inequality indicator
+forward in time (`src/services/forecasting.py`).
+
+- **Task:** univariate time-trend regression. Predict a country's Gini, P90/P10, or S80/S20 for
+  future years from its own history. Regression was chosen over classification because the annual
+  Norwegian series and the Philippine survey series are the only parts of the data with enough
+  repeated observations to learn from.
+- **Data:** Norway 2001-2024 (24 annual points, all three indicators) and Philippine regional Gini
+  for 2009-2023 (6 survey points per region). The USA extract only covers 2023-2024 and is
+  therefore excluded from forecasting.
+- **Models:** `LinearRegression` on the year offset, or `PolynomialFeatures(2)` +
+  `StandardScaler` + `Ridge` for a curved trend.
+- **Evaluation:** rolling-origin (walk-forward) backtest rather than a shuffled split, scored with
+  MAE, RMSE, and R-squared, and always compared against a naive last-value baseline.
+- **Honest result:** for Norway's Gini and S80/S20 the naive baseline *beats* the model — those
+  series are essentially flat with irregular spikes, so there is no smooth trend to learn. The
+  dashboard says so explicitly. Norway's P90/P10 and the declining Philippine Gini series are
+  where the trend model actually helps.
+- **Caveats:** sample sizes are very small by ML standards, the model uses calendar time as its
+  only feature, and it cannot anticipate policy changes or shocks.
+
+See `docs/methodology.md` for the full write-up. Run the tests with `pytest tests`.
 
 ## What I Am Building
 
@@ -209,6 +238,7 @@ Active and deployable.
 - Core ETL pipeline is in place (raw CSV -> SQLite -> cleaned tables).
 - Streamlit dashboard is live and updated from the `main` branch.
 - Country CSV upload pipeline is implemented with mapping, validation, and persistence.
+- A scikit-learn trend forecast with walk-forward backtesting is surfaced in the dashboard.
 
 ## Findings (current snapshot)
 

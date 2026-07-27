@@ -85,6 +85,14 @@ def load_core_data(db_path: Path):
     return norway, usa, ph.iloc[0], norway_welfare_total, usa_lowest_quintile_share
 
 
+def load_ph_regions(db_path: Path) -> pd.DataFrame:
+    if not db_path.exists():
+        raise FileNotFoundError(f"Database not found: {db_path}")
+
+    with sqlite3.connect(db_path) as conn:
+        return pd.read_sql_query("SELECT * FROM philippines_clean", conn)
+
+
 def load_user_country_data(db_path: Path, table_name: str) -> pd.DataFrame:
     if not db_path.exists():
         return pd.DataFrame(
