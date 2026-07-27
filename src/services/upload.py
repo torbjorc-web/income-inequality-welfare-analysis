@@ -2,7 +2,8 @@ import pandas as pd
 
 
 def normalize_mapped_upload(raw_df, country_mode, country_column, fixed_country, mapping):
-    out = pd.DataFrame()
+    # Seed the index so that a scalar fixed country name broadcasts to every row.
+    out = pd.DataFrame(index=raw_df.index)
 
     if country_mode == "Use column":
         out["country"] = raw_df[country_column].astype(str).str.strip()
@@ -31,9 +32,8 @@ def normalize_mapped_upload(raw_df, country_mode, country_column, fixed_country,
     out["p90_p10"] = pd.to_numeric(out["p90_p10"], errors="coerce")
     out["s80_s20"] = pd.to_numeric(out["s80_s20"], errors="coerce")
     out["welfare_proxy_value"] = pd.to_numeric(out["welfare_proxy_value"], errors="coerce")
-    out["welfare_proxy_label"] = out["welfare_proxy_label"].astype(str).replace({"nan": ""})
-    out["source"] = out["source"].astype(str).replace({"nan": ""})
-    out["notes"] = out["notes"].astype(str).replace({"nan": ""})
+    for text_col in ["welfare_proxy_label", "source", "notes"]:
+        out[text_col] = out[text_col].fillna("").astype(str).replace({"nan": ""})
 
     return out
 
