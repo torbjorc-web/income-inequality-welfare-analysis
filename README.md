@@ -100,6 +100,40 @@ The dashboard includes:
 - CSV upload pipeline for adding custom country data into SQLite
 - a **Trend forecast (machine learning)** section with scikit-learn predictions and backtest scores
 
+## Running tests
+
+```bash
+pip install -r requirements-dev.txt
+pytest
+```
+
+`pytest.ini` sets `testpaths = tests` and puts the repository root on `PYTHONPATH`, so `pytest`
+works from the project root without any extra flags. Useful variations:
+
+```bash
+pytest tests/test_upload.py          # one module
+pytest -k "gini and not dashboard"   # by name
+pytest -q                            # quiet summary
+```
+
+What the suite covers:
+
+| Test module | Under test |
+| --- | --- |
+| `tests/test_config.py` | project paths, required-table set, CSV upload template |
+| `tests/test_repository.py` | SQLite loaders/writers and number parsing in `src/data/repository.py` |
+| `tests/test_metrics.py` | Gini / P90-P10 / S80-S20 selection and series building |
+| `tests/test_upload.py` | CSV column mapping and upload validation rules |
+| `tests/test_bootstrap.py` | schema detection, bootstrap orchestration, idempotent table creation |
+| `tests/test_setup_database.py` | delimiter/encoding detection and raw CSV ingestion |
+| `tests/test_clean_data.py` | USA / Philippines / Norway cleaning transformations |
+| `tests/test_analyze_data.py` | summary statistics and the analysis report writer |
+| `tests/test_dashboard_app.py` | Streamlit `AppTest` smoke tests for `dashboard.py` |
+| `tests/test_forecasting.py` | scikit-learn trend forecast and rolling-origin backtest |
+
+Every test builds its own SQLite database and CSV fixtures under pytest's `tmp_path`, so the suite
+never reads or writes `database/database.db`, `data/`, or `outputs/`.
+
 ## Dashboard Screenshots
 
 ![Dashboard overview](outputs/dashboard_screenshots/dashboard_overview.png)
@@ -189,7 +223,7 @@ Imported rows are stored in SQLite and included in country selector, trend chart
 - `notebooks/` — exploration and analysis notebooks.
 - `scripts/` — reusable Python scripts for cleaning and analysis.
 - `src/` — dashboard application code (config, SQLite repository, services incl. the ML forecast).
-- `tests/` — pytest suite for the service layer.
+- `tests/` — pytest suite covering the service layer, data access, scripts, and the dashboard.
 - `outputs/` — charts, tables, and screenshots.
 - `docs/` — project description, methodology, and references.
 - `assets/` — cover image and badge notes.
@@ -222,7 +256,7 @@ forward in time (`src/services/forecasting.py`).
 - **Caveats:** sample sizes are very small by ML standards, the model uses calendar time as its
   only feature, and it cannot anticipate policy changes or shocks.
 
-See `docs/methodology.md` for the full write-up. Run the tests with `pytest tests`.
+See `docs/methodology.md` for the full write-up. Run the tests with `pytest` (see [Running tests](#running-tests)).
 
 ## What I Am Building
 
