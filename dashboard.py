@@ -3,7 +3,22 @@ import streamlit as st
 
 from src.config import BASE_DIR, CSV_TEMPLATE, DB_PATH, REQUIRED_TABLES, USER_COUNTRY_TABLE
 from src.data.bootstrap import ensure_database_ready, ensure_user_country_table
-from src.data.repository import load_core_data, load_user_country_data, save_user_country_data
+from src.data.repository import (
+    load_core_data,
+    load_ph_regions,
+    load_user_country_data,
+    save_user_country_data,
+)
+from src.services.forecasting import (
+    MIN_OBSERVATIONS,
+    MODEL_CHOICES,
+    NORWAY_METRICS,
+    build_norway_series,
+    build_ph_region_series,
+    build_user_country_series,
+    combined_chart_frame,
+    forecast_series,
+)
 from src.services.metrics import (
     build_ph_gini_series,
     build_usa_gini_series,
@@ -23,6 +38,100 @@ def load_data(_db_path: str):
 @st.cache_data
 def load_uploaded_data(_db_path: str):
     return load_user_country_data(DB_PATH, USER_COUNTRY_TABLE)
+
+
+@st.cache_data
+def load_ph_region_data(_db_path: str):
+    return load_ph_regions(DB_PATH)
+
+
+def forecast_source_options(ph_regions_df, user_country_df):
+    options = {"Norway": ("norway", None)}
+    for region in ph_regions_df["region"].dropna():
+        if len(build_ph_region_series(ph_regions_df, region)) >= MIN_OBSERVATIONS:
+            options[f"Philippines - {region}"] = ("philippines", region)
+    for country in sorted(user_country_df["country"].dropna().unique()):
+        if len(build_user_country_series(user_country_df, country, "gini")) >= MIN_OBSERVATIONS:
+            options[f"{country} (uploaded)"] = ("user", country)
+    return options
+
+
+def render_forecast_section(norway_df, ph_regions_df, user_country_df, exclude_students):
+    st.header("Trend forecast (machine learning)")
+    st.caption(
+        "A scikit-learn regression fitted on the historical indicator values for one series, "
+        "validated with a rolling-origin backtest against a naive last-value baseline."
+    )
+
+    options = forecast_source_options(ph_regions_df, user_country_df)
+    col_source, col_metric, col_model, col_horizon = st.columns(4)
+    source_label = col_source.selectbox("Series", list(options), key="fc_source")
+    kind, key = options[source_label]
+
+    if kind == "norway":
+        metric = col_metric.selectbox("Metric", list(NORWAY_METRICS), key="fc_metric")
+        series = build_norway_series(norway_df, metric, exclude_students)
+        step = 1
+    else:
+        metric = "Gini"
+        col_metric.selectbox("Metric", ["Gini"], key=f"fc_metric_{kind}", disabled=True)
+        if kind == "philippines":
+            # PSA runs the income survey every two to three years.
+            series, step = build_ph_region_series(ph_regions_df, key), 2
+        else:
+            series, step = build_user_country_series(user_country_df, key, "gini"), 1
+
+    model_name = col_model.selectbox("Model", MODEL_CHOICES, key="fc_model")
+    horizon = col_horizon.slider("Periods ahead", 1, 6, 3, key="fc_horizon")
+
+    try:
+        result = forecast_series(series, model_name=model_name, horizon=horizon, step=step)
+    except ValueError as exc:
+        st.warning(str(exc))
+        return
+
+    st.line_chart(combined_chart_frame(result))
+
+    m1, m2, m3, m4 = st.columns(4)
+    metrics = result.metrics
+    m1.metric("Backtest MAE", f"{metrics['mae']:.4f}", help="Mean absolute error on held-out years")
+    m2.metric("Backtest RMSE", f"{metrics['rmse']:.4f}")
+    m3.metric("Backtest R²", f"{metrics['r2']:.3f}" if "r2" in metrics else "n/a")
+    m4.metric(
+        "Naive baseline MAE",
+        f"{metrics['baseline_mae']:.4f}",
+        delta=f"{metrics['baseline_mae'] - metrics['mae']:+.4f} vs model",
+        help="Baseline repeats the last observed value. A positive delta means the model beats it.",
+    )
+
+    left, right = st.columns(2)
+    with left:
+        st.subheader(f"Predicted {metric}")
+        st.dataframe(
+            result.forecast.rename(columns={"year": "Year", "predicted": "Predicted"}),
+            hide_index=True,
+            width="stretch",
+        )
+    with right:
+        st.subheader("Rolling-origin backtest")
+        st.dataframe(
+            result.backtest.rename(
+                columns={
+                    "year": "Year",
+                    "actual": "Actual",
+                    "predicted": "Predicted",
+                    "baseline": "Baseline",
+                }
+            ),
+            hide_index=True,
+            width="stretch",
+        )
+
+    st.warning("Model limitations:\n\n" + "\n".join(f"- {c}" for c in result.caveats))
+    st.caption(
+        "USA is not offered here: the cleaned Census extract only covers 2023 and 2024, "
+        "which is too short to fit or validate a trend model."
+    )
 
 
 def main():
@@ -325,6 +434,13 @@ def main():
         }
     )
     st.line_chart(norway_indicator_df.set_index("year"))
+
+    render_forecast_section(
+        norway_df,
+        load_ph_region_data(str(DB_PATH)),
+        user_country_df,
+        exclude_students=population != "All population",
+    )
 
     st.caption(
         "Note: Welfare scatter uses available country-specific welfare proxies from SQLite tables; "
