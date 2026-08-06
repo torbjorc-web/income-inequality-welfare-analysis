@@ -2,7 +2,7 @@
 
 ![Project Cover](assets/cover.png)
 
-![Status](https://img.shields.io/badge/status-in%20progress-orange?style=for-the-badge)
+![Status](https://img.shields.io/badge/status-complete-brightgreen?style=for-the-badge)
 ![Data](https://img.shields.io/badge/data-official%20statistics-blue?style=for-the-badge)
 ![Focus](https://img.shields.io/badge/focus-data%20analysis%20%26%20visualization-green?style=for-the-badge)
 ![Countries](https://img.shields.io/badge/countries-Norway%20%7C%20USA%20%7C%20Philippines-purple?style=for-the-badge)
