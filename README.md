@@ -2,6 +2,7 @@
 
 ![Project Cover](assets/cover.png)
 
+[![Tests](https://github.com/torbjorc-web/income-inequality-welfare-analysis/actions/workflows/tests.yml/badge.svg)](https://github.com/torbjorc-web/income-inequality-welfare-analysis/actions/workflows/tests.yml)
 ![Status](https://img.shields.io/badge/status-complete-brightgreen?style=for-the-badge)
 ![Data](https://img.shields.io/badge/data-official%20statistics-blue?style=for-the-badge)
 ![Focus](https://img.shields.io/badge/focus-data%20analysis%20%26%20visualization-green?style=for-the-badge)
