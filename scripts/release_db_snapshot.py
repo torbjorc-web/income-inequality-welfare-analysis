@@ -11,7 +11,7 @@ DEFAULT_COMMIT_MESSAGE = "Update database snapshot and derived outputs"
 
 def run(cmd: list[str]) -> None:
     print("$", " ".join(cmd))
-    result = subprocess.run(cmd, cwd=str(ROOT))
+    result = subprocess.run(cmd, cwd=str(ROOT), check=False)
     if result.returncode != 0:
         raise RuntimeError(f"Command failed ({result.returncode}): {' '.join(cmd)}")
 
@@ -33,6 +33,7 @@ def has_staged_changes() -> bool:
     result = subprocess.run(
         ["git", "diff", "--cached", "--quiet"],
         cwd=str(ROOT),
+        check=False,
     )
     return result.returncode != 0
 

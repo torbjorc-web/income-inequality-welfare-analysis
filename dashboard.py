@@ -175,7 +175,7 @@ def main():
             norway_welfare_total,
             usa_lowest_quintile_share,
         ) = load_data(str(DB_PATH))
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 - top-level UI boundary, must surface any failure to the user
         st.error("Unable to initialize dashboard data.")
         st.exception(exc)
         st.stop()
@@ -242,7 +242,7 @@ def main():
                         save_user_country_data(DB_PATH, USER_COUNTRY_TABLE, normalized_df)
                         st.success(f"Imported {len(normalized_df)} rows.")
                         load_uploaded_data.clear()
-            except Exception as exc:
+            except Exception as exc:  # noqa: BLE001 - user-uploaded CSVs can raise many different parser errors
                 st.error("Could not parse CSV upload.")
                 st.exception(exc)
 

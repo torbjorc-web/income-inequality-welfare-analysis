@@ -120,7 +120,7 @@ def load_user_country_data(db_path: Path, table_name: str) -> pd.DataFrame:
                 """,
                 conn,
             )
-        except Exception:
+        except Exception:  # noqa: BLE001 - table may not exist yet, fall back to an empty frame
             return pd.DataFrame(
                 columns=[
                     "country",

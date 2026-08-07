@@ -55,7 +55,7 @@ def read_csv_flexible(path, sep):
                 encoding=enc,
                 on_bad_lines="skip",
             )
-        except Exception as exc:
+        except Exception as exc:  # noqa: BLE001 - trying multiple encodings, any failure means "try next"
             last_error = exc
     raise RuntimeError(f"Unable to read CSV file: {path}") from last_error
 
@@ -81,9 +81,9 @@ def clean_usa_dataset():
 
         if not measure:
             continue
-        if measure.startswith("*An asterisk") or measure.startswith("Z Rounds") or measure.startswith("1 A margin"):
+        if measure.startswith(("*An asterisk", "Z Rounds", "1 A margin")):
             break
-        if measure.startswith("2 Calculated") or measure.startswith("Note:") or measure.startswith("Source:"):
+        if measure.startswith(("2 Calculated", "Note:", "Source:")):
             continue
 
         if all(not c for c in cells):
@@ -129,7 +129,7 @@ def clean_philippines_dataset():
         region = str(row[0]).strip()
         if not region:
             continue
-        if region.startswith("Note:") or region.startswith("Source:"):
+        if region.startswith(("Note:", "Source:")):
             break
 
         values = [str(row[i]).strip() for i in range(1, 7)]

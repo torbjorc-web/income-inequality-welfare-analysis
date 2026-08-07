@@ -22,6 +22,7 @@ def run_python_script(base_dir: Path, script_path: Path) -> None:
         capture_output=True,
         text=True,
         cwd=str(base_dir),
+        check=False,
     )
     if result.returncode != 0:
         raise RuntimeError(

@@ -160,10 +160,14 @@ def forecast_series(
 
 def _build_caveats(series: pd.DataFrame, metrics: dict, model_name: str) -> list[str]:
     caveats = [
-        f"Fitted on {len(series)} observations ({series['year'].iloc[0]}-{series['year'].iloc[-1]}); "
-        "this is a very small sample by machine-learning standards.",
-        "The model extrapolates a smooth trend in calendar time only. It has no policy, "
-        "macroeconomic, or survey-methodology inputs, so it cannot anticipate shocks or reforms.",
+        (
+            f"Fitted on {len(series)} observations ({series['year'].iloc[0]}-{series['year'].iloc[-1]}); "
+            "this is a very small sample by machine-learning standards."
+        ),
+        (
+            "The model extrapolates a smooth trend in calendar time only. It has no policy, "
+            "macroeconomic, or survey-methodology inputs, so it cannot anticipate shocks or reforms."
+        ),
     ]
     if metrics["n_backtest"] < 5:
         caveats.append(

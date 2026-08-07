@@ -47,8 +47,8 @@ def load_csv(path):
         try:
             delimiter = detect_delimiter(path, enc)
             return pd.read_csv(path, encoding=enc, sep=delimiter, engine='python', on_bad_lines='skip')
-        except Exception:
-            pass
+        except Exception as exc:  # noqa: BLE001 - trying multiple encodings, any failure means "try next"
+            print(f'DEBUG: encoding {enc!r} failed for {path.name}: {exc}')
     with open(path, 'r', encoding='utf-8', errors='ignore', newline='') as f:
         delimiter = ';'
         try:
@@ -63,8 +63,8 @@ def load_csv(path):
             semicolon_count = sum(line.count(';') for line in sample)
             comma_count = sum(line.count(',') for line in sample)
             delimiter = ';' if semicolon_count >= comma_count else ','
-        except Exception:
-            pass
+        except Exception as exc:  # noqa: BLE001 - delimiter sniffing is best-effort, fall back to default ';'
+            print(f'DEBUG: delimiter sniffing failed for {path.name}, defaulting to \';\': {exc}')
         f.seek(0)
         return pd.read_csv(f, sep=delimiter, engine='python', on_bad_lines='skip')
 
@@ -91,7 +91,7 @@ def main():
                 df = clean_columns(df)
                 df.to_sql(table_name, conn, if_exists='replace', index=False)
                 print(f'OK: {table_name} <- {file_path.name} ({len(df)} rows, {len(df.columns)} cols)')
-            except Exception as e:
+            except Exception as e:  # noqa: BLE001 - one bad CSV should not stop the rest of the import
                 print(f'ERROR: {file_path.name}: {e}')
 
     print(f'Database created at: {DB_PATH}')
