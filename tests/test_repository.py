@@ -14,7 +14,6 @@ from src.data.repository import (
     save_user_country_data,
 )
 
-
 USER_COLUMNS = [
     "country",
     "year",

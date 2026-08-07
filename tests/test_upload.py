@@ -5,7 +5,6 @@ import pytest
 
 from src.services.upload import normalize_mapped_upload, validate_country_upload
 
-
 FULL_MAPPING = {
     "year": "Year",
     "gini": "Gini",

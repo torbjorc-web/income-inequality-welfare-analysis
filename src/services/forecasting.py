@@ -114,7 +114,7 @@ def _score(backtest: pd.DataFrame) -> dict:
         "mae": float(mean_absolute_error(actual, predicted)),
         "rmse": float(np.sqrt(np.mean((actual - predicted) ** 2))),
         "baseline_mae": float(mean_absolute_error(actual, backtest["baseline"])),
-        "n_backtest": int(len(backtest)),
+        "n_backtest": len(backtest),
     }
     # R^2 is undefined for a single point and unstable when actuals barely vary.
     if len(backtest) >= 3 and actual.std(ddof=0) > 0:

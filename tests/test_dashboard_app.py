@@ -8,7 +8,6 @@ from src import config
 from src.data.bootstrap import ensure_user_country_table
 from src.data.repository import save_user_country_data
 
-
 DASHBOARD_PATH = str(config.BASE_DIR / "dashboard.py")
 
 

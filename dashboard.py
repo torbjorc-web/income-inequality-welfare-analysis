@@ -1,7 +1,13 @@
 import pandas as pd
 import streamlit as st
 
-from src.config import BASE_DIR, CSV_TEMPLATE, DB_PATH, REQUIRED_TABLES, USER_COUNTRY_TABLE
+from src.config import (
+    BASE_DIR,
+    CSV_TEMPLATE,
+    DB_PATH,
+    REQUIRED_TABLES,
+    USER_COUNTRY_TABLE,
+)
 from src.data.bootstrap import ensure_database_ready, ensure_user_country_table
 from src.data.repository import (
     load_core_data,

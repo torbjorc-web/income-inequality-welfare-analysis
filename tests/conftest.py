@@ -3,7 +3,6 @@ import sqlite3
 import pandas as pd
 import pytest
 
-
 _NORWAY_YEARS = list(range(2015, 2025))
 
 NORWAY_INDICATOR_ROWS = pd.DataFrame(

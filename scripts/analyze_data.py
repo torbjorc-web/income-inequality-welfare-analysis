@@ -2,7 +2,6 @@ import sqlite3
 from pathlib import Path
 from statistics import mean
 
-
 BASE_DIR = Path(__file__).resolve().parents[1]
 DB_PATH = BASE_DIR / "database" / "database.db"
 OUTPUT_DIR = BASE_DIR / "outputs"

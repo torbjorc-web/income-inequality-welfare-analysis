@@ -9,7 +9,6 @@ from src.data.bootstrap import (
     run_python_script,
 )
 
-
 REQUIRED = {"norway_inequality_indicators_clean", "usa_clean", "philippines_clean", "norway_public_services"}
 
 

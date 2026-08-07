@@ -4,7 +4,6 @@ import pytest
 
 from scripts import clean_data
 
-
 USA_CSV = """Report title;;;;;;
 Measure;2023;;2024;;Change;
 ;Estimate;MOE;Estimate;MOE;Estimate;MOE
