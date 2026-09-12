@@ -135,6 +135,17 @@ What the suite covers:
 Every test builds its own SQLite database and CSV fixtures under pytest's `tmp_path`, so the suite
 never reads or writes `database/database.db`, `data/`, or `outputs/`.
 
+## Quality assurance
+
+A structured review of the codebase is documented in
+[docs/testplan_feilrapport_forbedringer.md](docs/testplan_feilrapport_forbedringer.md) (written in Norwegian).
+It contains a test plan with 26 test cases, a defect report with 12 findings, and 22 prioritized
+improvement proposals.
+
+Snapshot at the time of review: 170 tests passing, `ruff check .` clean, 99 % statement coverage of
+`src/` and 95 % overall. Each finding is tracked as a GitHub issue with a severity label
+(`alvorsgrad:hoy`, `alvorsgrad:middels`, `alvorsgrad:lav`).
+
 ## Dashboard Screenshots
 
 ![Dashboard overview](outputs/dashboard_screenshots/dashboard_overview.png)
@@ -233,6 +244,7 @@ Additional docs:
 
 - `docs/data_dictionary.md` — table and column definitions for core datasets.
 - `docs/reflection.md` — lessons learned, challenges, and next improvements.
+- `docs/testplan_feilrapport_forbedringer.md` — test plan, defect report, and improvement backlog (Norwegian).
 
 ## Machine learning: inequality trend forecast
 
