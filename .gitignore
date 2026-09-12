@@ -14,3 +14,9 @@ env/
 # Editor/OS noise
 .DS_Store
 Thumbs.db
+
+# Coverage artifacts
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
