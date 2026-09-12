@@ -1,0 +1,27 @@
+# Single source of truth for coverage measurement, used by local runs and CI.
+# CI runs `pytest --cov` with no value, so what gets measured is defined here.
+
+[run]
+# Directories are listed under `source` so that modules with no tests at all
+# still show up as 0 %, instead of silently disappearing from the report.
+source =
+    src
+    scripts
+# Top-level modules are listed as packages; a bare `dashboard.py` path under
+# `source` makes coverage import the file, which breaks numpy's single-load
+# guard on Python 3.14.
+source_pkgs =
+    dashboard
+    setup_database
+omit =
+    tests/*
+    notebooks/*
+
+[report]
+show_missing = True
+# Ratchet: raise this as coverage improves. It is well below the 99 % that
+# src/ reaches because scripts/make_charts.py and scripts/release_db_snapshot.py
+# have no tests at all.
+fail_under = 60
+exclude_also =
+    if __name__ == .__main__.:

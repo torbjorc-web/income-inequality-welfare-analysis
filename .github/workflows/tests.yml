@@ -24,5 +24,22 @@ jobs:
       - name: Lint with ruff
         run: ruff check .
 
+      # `--cov` without a value makes coverage read what to measure from
+      # .coveragerc, so the measurement target lives in one place.
+      # The overall gate (fail_under) is also defined there.
       - name: Run tests with coverage
-        run: pytest -q --cov=app --cov-report=term-missing
+        run: pytest -q --cov --cov-report=term-missing --cov-report=xml
+
+      # Stricter gate for the application package, where the tests actually are.
+      # The overall total is dragged down by two untested scripts; this keeps
+      # src/ from regressing while that gap is being closed.
+      - name: Enforce coverage gate for src/
+        run: coverage report --include='src/*' --fail-under=95
+
+      - name: Upload coverage report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-xml
+          path: coverage.xml
+          if-no-files-found: warn
